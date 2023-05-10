@@ -1,50 +1,46 @@
 #include <M5Core2.h>
+#include <WiFi.h>
+#include <time.h>
 
+const char* ssid = "20200815me"; // WiFiのSSIDを入力してください
+const char* password = "0815asdf"; // WiFiのパスワードを入力してください
+const char* ntpServer = "pool.ntp.org"; // NTPサーバーのホスト名
+
+const int timeZone = 9; // タイムゾーン（日本は+9）
 
 void setup() {
   M5.begin();
-  
-  // ボタンA、ボタンB、ボタンCのイベントリスナーを設定
-  //M5.BtnA.setPressedHandler(button_a_was_pressed);
-  //M5.BtnB.setPressedHandler(button_b_was_pressed);
-  //M5.BtnC.setPressedHandler(button_c_was_pressed);
-  M5.Lcd.clear();
-  M5.Lcd.fillScreen(TFT_BLACK);
-  M5.Lcd.setTextColor(TFT_WHITE);
   M5.Lcd.setTextSize(3);
-  M5.Lcd.setCursor(0, 0);
-  M5.Lcd.print("start");
+  M5.Lcd.setTextColor(WHITE, BLACK);
 
+  // WiFiに接続
+  Serial.println();
+  Serial.printf("Connecting to %s ", ssid);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println(" connected");
+  
+  // NTPサーバーから時刻情報を取得
+  configTime(timeZone * 3600, 0, ntpServer);
+  while (!time(nullptr)) {
+    delay(100);
+  }
 }
 
 void loop() {
-  M5.update();
+  // 現在の時刻を取得
+  time_t now = time(nullptr);
+  struct tm timeinfo;
+  localtime_r(&now, &timeinfo);
 
-  if (M5.BtnA.wasPressed()) {
-    M5.Lcd.clear();
-    M5.Lcd.fillScreen(TFT_GREEN);
-    M5.Lcd.setTextColor(TFT_WHITE);
-    M5.Lcd.setTextSize(3);
-    M5.Lcd.setCursor(0, 0);
-    M5.Lcd.print("hello world");
-  }
+  // LCD画面に時刻を表示
+  char formattedTime[16];
+  sprintf(formattedTime, "%02d:%02d:%02d", timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
+  M5.Lcd.setCursor(0, 0);
+  M5.Lcd.print(formattedTime);
 
-  if (M5.BtnB.wasPressed()) {
-    M5.Lcd.clear();
-    M5.Lcd.fillScreen(TFT_YELLOW);
-    M5.Lcd.setTextColor(TFT_BLACK);
-    M5.Lcd.setTextSize(3);
-    M5.Lcd.setCursor(0, 0);
-    M5.Lcd.print("hello world");
-  }
-
-  if (M5.BtnC.wasPressed()) {
-    M5.Lcd.clear();
-    M5.Lcd.fillScreen(TFT_RED);
-    M5.Lcd.setTextColor(TFT_GREEN);
-    M5.Lcd.setTextSize(3);
-    M5.Lcd.setCursor(0, 0);
-    M5.Lcd.print("hello world");
-  }
-
+  delay(1000);
 }
