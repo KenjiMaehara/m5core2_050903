@@ -13,12 +13,17 @@ void loop() {
   if (M5.BtnA.wasReleased()) {
     // ビープ音を鳴らす
     //M5.Speaker.tone(1000, 500); // 周波数1000Hz、長さ500msのビープ音
-    tone(BUZZER_PIN, 1000, 500); // ピン番号、周波数1000Hz、長さ500msのビープ音
-    delay(500); // 500ms待機して音を停止
-    noTone(BUZZER_PIN); // ブザーを停止
+    //tone(BUZZER_PIN, 1000, 500); // ピン番号、周波数1000Hz、長さ500msのビープ音
+    M5.Speaker.tone(1000, 500); // 周波数1000Hz、長さ500msのビープ音
+    //delay(500); // 500ms待機して音を停止
+    //noTone(BUZZER_PIN); // ブザーを停止
 
 
     //M5.Lcd.println("beepsound");
     Serial.println("beepsound");
   }
 }
+
+
+
+
