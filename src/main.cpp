@@ -2,8 +2,8 @@
 #include <WiFi.h>
 #include <time.h>
 
-const char* ssid = "20200815me"; // WiFiのSSIDを入力してください
-const char* password = "0815asdf"; // WiFiのパスワードを入力してください
+const char* ssid = "googlemain"; // WiFiのSSIDを入力してください
+const char* password = "asdf1106"; // WiFiのパスワードを入力してください
 const char* ntpServer = "pool.ntp.org"; // NTPサーバーのホスト名
 
 const int timeZone = 9; // タイムゾーン（日本は+9）
