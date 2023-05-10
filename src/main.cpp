@@ -10,7 +10,7 @@ const int timeZone = 9; // タイムゾーン（日本は+9）
 
 void setup() {
   M5.begin();
-  M5.Lcd.setTextSize(3);
+  M5.Lcd.setTextSize(6);
   M5.Lcd.setTextColor(WHITE, BLACK);
 
   // WiFiに接続
