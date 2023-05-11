@@ -1,101 +1,41 @@
-#include <M5Core2.h>
 #include <WiFi.h>
-#include <SPIFFS.h>
-#include <ArduinoJson.h>
+#include <WiFiClient.h>
+#include <WiFiMulti.h>
+#include <SPI.h>
 
-const char *configFile = "/wifi_config.json";
-const char *ssid;
-const char *password;
+WiFiMulti wifiMulti;
 
-void loadWifiConfig();
-void saveWifiConfig(const char *ssid, const char *password);
-void connectToWiFi();
-
-
-void setup()
-{
-  M5.begin();
+void setup() {
   Serial.begin(115200);
-
-  if (!SPIFFS.begin(true))
-  {
-    Serial.println("An error occurred while mounting SPIFFS");
-    return;
-  }
-
-  loadWifiConfig();
-  connectToWiFi();
-}
-
-void loop()
-{
-  // WiFi接続後の処理をここに記述
-
-}
-
-void loadWifiConfig()
-{
-  if (!SPIFFS.exists(configFile))
-  {
-    Serial.println("WiFi config file not found");
-    return;
-  }
-
-  File configFile = SPIFFS.open("/config.txt", "r");
-  if (!configFile)
-  {
-    Serial.println("Failed to open WiFi config file");
-    return;
-  }
-
-  // WiFi設定情報の読み込み
-  StaticJsonDocument<256> jsonConfig;
-  DeserializationError error = deserializeJson(jsonConfig, configFile);
-  if (error)
-  {
-    Serial.println("Failed to parse WiFi config file");
-    return;
-  }
-
-  ssid = jsonConfig["ssid"];
-  password = jsonConfig["password"];
-
-  configFile.close();
-}
-
-void saveWifiConfig(const char *ssid, const char *password)
-{
-  StaticJsonDocument<256> jsonConfig;
-  jsonConfig["ssid"] = ssid;
-  jsonConfig["password"] = password;
-
-  File configFile = SPIFFS.open("/config.txt", "w");
-  if (!configFile)
-  {
-    Serial.println("Failed to open WiFi config file for writing");
-    return;
-  }
-
-  serializeJson(jsonConfig, configFile);
-  configFile.close();
-}
-
-void connectToWiFi()
-{
-  if (!ssid || !password)
-  {
-    Serial.println("No WiFi config available");
-    return;
-  }
-
-  WiFi.begin(ssid, password);
-  Serial.print("Connecting to WiFi");
-
-  while (WiFi.status() != WL_CONNECTED)
-  {
+  
+  // スマートコンフィグを開始
+  WiFi.beginSmartConfig();
+  
+  // WiFi接続の待機
+  while (!WiFi.smartConfigDone()) {
     delay(500);
     Serial.print(".");
   }
+  
+  // WiFi接続が確立されたら設定を表示
+  Serial.println();
+  Serial.println("WiFi connected");
+  Serial.println("SSID: " + WiFi.SSID());
+  Serial.println("Password: " + WiFi.psk());
+  
+  // オートリコネクトを有効化
+  WiFi.setAutoReconnect(true);
+  
+  // WiFiMultiに追加
+  //wifiMulti.addAP(WiFi.SSID(), WiFi.psk());
+  wifiMulti.addAP(WiFi.SSID().c_str(), WiFi.psk().c_str());
 
-  Serial.println("\nConnected to WiFi");
+}
+
+void loop() {
+  // WiFi接続の状態をチェック
+  if (wifiMulti.run() == WL_CONNECTED) {
+    // 接続成功時の処理をここに記述する
+    // 例えば、センサーデータの送信など
+  }
 }
