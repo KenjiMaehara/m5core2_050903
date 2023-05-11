@@ -1,47 +1,32 @@
 #include <M5Core2.h>
 #include <WiFi.h>
-#include <time.h>
-
-const char* ssid = "20200815me"; // WiFiのSSIDを入力してください
-const char* password = "0815asdf"; // WiFiのパスワードを入力してください
-const char* ntpServer = "pool.ntp.org"; // NTPサーバーのホスト名
-
-const int timeZone = 9; // タイムゾーン（日本は+9）
 
 void setup() {
   M5.begin();
-  M5.Lcd.fillScreen(TFT_YELLOW);
-  M5.Lcd.setTextSize(6);
-  M5.Lcd.setTextColor(TFT_BLACK,TFT_YELLOW);
-
-  // WiFiに接続
-  Serial.println();
-  Serial.printf("Connecting to %s ", ssid);
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println(" connected");
+  //M5.Power.begin();
+  M5.Lcd.printf("Wi-Fi Configuration\n");
+  delay(1000);
   
-  // NTPサーバーから時刻情報を取得
-  configTime(timeZone * 3600, 0, ntpServer);
-  while (!time(nullptr)) {
-    delay(100);
+  // Wi-Fi設定モードを開始
+  WiFi.beginSmartConfig();
+  
+  // Wi-Fi接続待機
+  while (!WiFi.smartConfigDone()) {
+    delay(500);
+    M5.Lcd.print(".");
   }
+  
+  // Wi-Fi接続が完了したら、SSIDとパスワードを表示
+  M5.Lcd.printf("\n\nWi-Fi Configuration Completed!\n");
+  M5.Lcd.printf("SSID: %s\n", WiFi.SSID().c_str());
+  M5.Lcd.printf("Password: %s\n", WiFi.psk().c_str());
+  
+  // 接続されたWi-Fiネットワークの詳細を表示
+  M5.Lcd.printf("IP Address: %s\n", WiFi.localIP().toString().c_str());
+  M5.Lcd.printf("Gateway: %s\n", WiFi.gatewayIP().toString().c_str());
+  M5.Lcd.printf("Subnet Mask: %s\n", WiFi.subnetMask().toString().c_str());
 }
 
 void loop() {
-  // 現在の時刻を取得
-  time_t now = time(nullptr);
-  struct tm timeinfo;
-  localtime_r(&now, &timeinfo);
-
-  // LCD画面に時刻を表示
-  char formattedTime[16];
-  sprintf(formattedTime, "%02d:%02d:%02d", timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
-  M5.Lcd.setCursor(0, 0);
-  M5.Lcd.print(formattedTime);
-
-  delay(1000);
+  // 何もしない
 }
