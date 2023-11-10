@@ -1,47 +1,49 @@
 #include <M5Core2.h>
 #include <WiFi.h>
-#include <time.h>
+#include <HTTPClient.h>
 
-const char* ssid = "googlemain"; // WiFiのSSIDを入力してください
-const char* password = "asdf1106"; // WiFiのパスワードを入力してください
-const char* ntpServer = "pool.ntp.org"; // NTPサーバーのホスト名
+// WiFi設定
+const char* ssid = "googlemain";
+const char* password = "Fdsa@0813";
 
-const int timeZone = 9; // タイムゾーン（日本は+9）
+// NTPサーバー
+const char* ntpServer = "pool.ntp.org";
+const long  gmtOffset_sec = 3600;  // GMTオフセットを秒単位で設定
+const int   daylightOffset_sec = 3600;  // 夏時間のオフセット
+
+void displayTime();
 
 void setup() {
   M5.begin();
-  M5.Lcd.fillScreen(TFT_YELLOW);
-  M5.Lcd.setTextSize(6);
-  M5.Lcd.setTextColor(TFT_BLACK,TFT_YELLOW);
-
-  // WiFiに接続
-  Serial.println();
-  Serial.printf("Connecting to %s ", ssid);
   WiFi.begin(ssid, password);
+
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    M5.Lcd.println("Connecting to WiFi...");
   }
-  Serial.println(" connected");
-  
-  // NTPサーバーから時刻情報を取得
-  configTime(timeZone * 3600, 0, ntpServer);
-  while (!time(nullptr)) {
-    delay(100);
-  }
+
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+  M5.Lcd.setTextColor(TFT_WHITE);
+  M5.Lcd.setTextSize(2);
 }
 
 void loop() {
-  // 現在の時刻を取得
-  time_t now = time(nullptr);
-  struct tm timeinfo;
-  localtime_r(&now, &timeinfo);
-
-  // LCD画面に時刻を表示
-  char formattedTime[16];
-  sprintf(formattedTime, "%02d:%02d:%02d", timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
-  M5.Lcd.setCursor(0, 0);
-  M5.Lcd.print(formattedTime);
-
+  M5.update();
+  displayTime();
   delay(1000);
+}
+
+void displayTime() {
+  struct tm timeinfo;
+  if (!getLocalTime(&timeinfo)) {
+    M5.Lcd.println("Failed to obtain time");
+    return;
+  }
+
+  char timeString[10];
+  sprintf(timeString, "%02d:%02d:%02d", timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
+
+  M5.Lcd.fillScreen(TFT_BLACK);
+  M5.Lcd.setCursor(10, 10);
+  M5.Lcd.println(timeString);
 }
