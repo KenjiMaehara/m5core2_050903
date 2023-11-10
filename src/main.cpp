@@ -8,7 +8,7 @@ const char* password = "Fdsa@0813";
 
 // NTPサーバー
 const char* ntpServer = "pool.ntp.org";
-const long  gmtOffset_sec = 3600;  // GMTオフセットを秒単位で設定
+const long  gmtOffset_sec = 3600 * 9;  // 日本のGMTオフセット（UTC+9）
 const int   daylightOffset_sec = 3600;  // 夏時間のオフセット
 
 void displayTime();
