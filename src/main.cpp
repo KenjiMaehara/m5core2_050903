@@ -43,6 +43,17 @@ void loop() {
   delay(1000);  // 1秒ごとに更新
 }
 
+void playTone(int frequency, int duration) {
+    M5.Axp.SetSpkEnable(true);
+    ledcAttachPin(25, 0);  // GPIO 25 をチャンネル 0 に割り当て
+    ledcSetup(0, frequency, 8);  // チャンネル 0 を設定
+    ledcWriteTone(0, frequency);
+    delay(duration);
+    ledcDetachPin(25);
+    M5.Axp.SetSpkEnable(false);
+}
+
+
 void displayTime() {
   struct tm timeinfo;
   if (!getLocalTime(&timeinfo)) {
@@ -73,6 +84,16 @@ void displayTime() {
   M5.Lcd.setTextSize(1);
   M5.Lcd.setCursor(10, 200);
   M5.Lcd.drawString(locationInfo, 10, 200);
+
+  // 毎時丁度に音を鳴らす
+  if (timeinfo.tm_min == 0 && timeinfo.tm_sec == 0) {
+      int hour = timeinfo.tm_hour % 12;  // 12時間制に変換
+      if (hour == 0) hour = 12;  // 0時は12時として扱う
+      for (int i = 0; i < hour; ++i) {
+          playTone(1000, 200);  // 1000Hzの音を200ms鳴らす
+          delay(300);  // 次の音までの間隔
+      }
+  }  
 }
 
 void displayLocation() {
