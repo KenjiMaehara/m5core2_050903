@@ -68,13 +68,11 @@ void displayTime() {
   M5.Lcd.println(timeString);
 
   // 現在地情報を表示
-  M5.Lcd.setFreeFont(&unicode_24px);
-  M5.Lcd.setTextSize(2);
-  M5.Lcd.setCursor(10, 200);
-  //M5.Lcd.println(locationInfo);
   // 日本語の表示部分でフォントを使用
-  //M5.Lcd.setFreeFont(&unicode_24px);
-  M5.Lcd.drawString(locationInfo, 10, 100);
+  M5.Lcd.setFreeFont(&unicode_24px);
+  M5.Lcd.setTextSize(1);
+  M5.Lcd.setCursor(10, 200);
+  M5.Lcd.drawString(locationInfo, 10, 200);
 }
 
 void displayLocation() {
