@@ -18,9 +18,11 @@ String locationInfo = "Location: Unknown";
 
 void displayTime();
 void displayLocation();  // 位置情報を取得する関数
+void playTone(int frequency, int duration);
 
 void setup() {
   M5.begin();
+  M5.Axp.SetSpkEnable(true);  // スピーカーを有効にする
   WiFi.begin(ssid, password);
 
   while (WiFi.status() != WL_CONNECTED) {
@@ -34,7 +36,10 @@ void setup() {
 
   displayLocation();  // 電源投入時に一度だけ位置情報を取得
 
+
+
   //M5.Lcd.setFreeFont(&unicode_24px);  // 日本語表示用のフォントを設定
+  playTone(1000, 200);  // 音を鳴らす
 }
 
 void loop() {
@@ -51,6 +56,26 @@ void playTone(int frequency, int duration) {
     delay(duration);
     ledcDetachPin(25);
     M5.Axp.SetSpkEnable(false);
+}
+
+
+
+TaskHandle_t toneTaskHandle = NULL;
+
+void playToneTask(void *parameter) {
+    int count = (int)parameter;
+    for (int i = 0; i < count; ++i) {
+        playTone(1000, 200);  // 音を鳴らす
+        vTaskDelay(pdMS_TO_TICKS(300));  // 次の音までの間隔
+    }
+    toneTaskHandle = NULL;  // タスクの終了を示す
+    vTaskDelete(NULL);  // タスクを終了
+}
+
+void startToneTask(int count) {
+    if (toneTaskHandle == NULL) {
+        xTaskCreate(playToneTask, "PlayTone", 2048, (void *)count, 1, &toneTaskHandle);
+    }
 }
 
 
@@ -85,15 +110,19 @@ void displayTime() {
   M5.Lcd.setCursor(10, 200);
   M5.Lcd.drawString(locationInfo, 10, 200);
 
+  #if 0
   // 毎時丁度に音を鳴らす
   if (timeinfo.tm_min == 0 && timeinfo.tm_sec == 0) {
-      int hour = timeinfo.tm_hour % 12;  // 12時間制に変換
-      if (hour == 0) hour = 12;  // 0時は12時として扱う
-      for (int i = 0; i < hour; ++i) {
-          playTone(1000, 200);  // 1000Hzの音を200ms鳴らす
-          delay(300);  // 次の音までの間隔
-      }
-  }  
+    int hour = timeinfo.tm_hour % 12;  // 12時間制に変換
+    if (hour == 0) hour = 12;  // 0時は12時として扱う
+    startToneTask(hour);
+  }
+  #endif
+
+  // 毎分0秒に音を鳴らす
+  if (timeinfo.tm_sec == 0 && toneTaskHandle == NULL) {
+    startToneTask(10);  // 10回音を鳴らす
+  }
 }
 
 void displayLocation() {
