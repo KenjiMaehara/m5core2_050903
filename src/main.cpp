@@ -12,8 +12,11 @@ const char* ntpServer = "pool.ntp.org";
 const long  gmtOffset_sec = 3600 * 9;  // 日本のGMTオフセット（UTC+9）
 const int   daylightOffset_sec = 0;    // 夏時間は日本では適用されない
 
+// 現在地情報を格納するグローバル変数
+String locationInfo = "Location: Unknown";
+
 void displayTime();
-void displayLocation();
+void displayLocation();  // 位置情報を取得する関数
 
 void setup() {
   M5.begin();
@@ -27,13 +30,14 @@ void setup() {
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
   M5.Lcd.setTextColor(TFT_WHITE);
   M5.Lcd.setTextSize(6);  // フォントサイズを大きくする
+
+  displayLocation();  // 電源投入時に一度だけ位置情報を取得
 }
 
 void loop() {
   M5.update();
   displayTime();
-  displayLocation();
-  delay(10000);  // 10秒ごとに更新
+  delay(1000);  // 1秒ごとに更新
 }
 
 void displayTime() {
@@ -52,9 +56,16 @@ void displayTime() {
   int x = (320 - textWidth) / 2;
   int y = (240 - textHeight) / 2 - 20;
 
+  M5.Lcd.setTextSize(6);
+
   M5.Lcd.fillScreen(TFT_BLACK);
   M5.Lcd.setCursor(x, y);
   M5.Lcd.println(timeString);
+
+  // 現在地情報を表示
+  M5.Lcd.setTextSize(2);
+  M5.Lcd.setCursor(10, 200);
+  M5.Lcd.println(locationInfo);
 }
 
 void displayLocation() {
@@ -69,13 +80,9 @@ void displayLocation() {
     String city = doc["city"].as<String>();
     String country = doc["country"].as<String>();
 
-    M5.Lcd.setTextSize(2);
-    M5.Lcd.setCursor(10, 200);
-    M5.Lcd.println("Location: " + city + ", " + country);
+    locationInfo = "Location: " + city + ", " + country;
   } else {
-    M5.Lcd.setTextSize(2);
-    M5.Lcd.setCursor(10, 200);
-    M5.Lcd.println("Location: Unable to retrieve");
+    locationInfo = "Location: Unable to retrieve";
   }
 
   http.end();
