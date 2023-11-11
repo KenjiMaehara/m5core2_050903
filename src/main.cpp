@@ -24,7 +24,7 @@ void setup() {
 
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
   M5.Lcd.setTextColor(TFT_WHITE);
-  M5.Lcd.setTextSize(2);
+  M5.Lcd.setTextSize(6);  // フォントサイズを大きくする
 }
 
 void loop() {
@@ -43,7 +43,13 @@ void displayTime() {
   char timeString[10];
   sprintf(timeString, "%02d:%02d:%02d", timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
 
+  int textWidth = M5.Lcd.textWidth(timeString);
+  int textHeight = 30;  // テキストの高さを大きくする
+
+  int x = (320 - textWidth) / 2;
+  int y = (240 - textHeight) / 2;
+
   M5.Lcd.fillScreen(TFT_BLACK);
-  M5.Lcd.setCursor(10, 10);
+  M5.Lcd.setCursor(x, y);
   M5.Lcd.println(timeString);
 }
