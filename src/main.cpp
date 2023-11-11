@@ -78,9 +78,9 @@ void displayLocation() {
     DynamicJsonDocument doc(1024);
     deserializeJson(doc, payload);
     String city = doc["city"].as<String>();
-    String country = doc["country"].as<String>();
+    //String country = doc["country"].as<String>();
 
-    locationInfo = "Location: " + city + ", " + country;
+    locationInfo = city;
   } else {
     locationInfo = "Location: Unable to retrieve";
   }
