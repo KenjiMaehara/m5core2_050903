@@ -53,7 +53,7 @@ void displayTime() {
   int textWidth = M5.Lcd.textWidth(timeString);
   int textHeight = 30;
 
-  int x = (320 - textWidth) / 2;
+  int x = 0;
   int y = (240 - textHeight) / 2 - 20;
 
   M5.Lcd.setTextSize(6);
