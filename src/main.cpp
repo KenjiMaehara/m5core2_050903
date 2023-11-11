@@ -78,9 +78,13 @@ void displayLocation() {
     DynamicJsonDocument doc(1024);
     deserializeJson(doc, payload);
     String city = doc["city"].as<String>();
-    //String country = doc["country"].as<String>();
 
-    locationInfo = city;
+    // 簡単なマッピングテーブル
+    if (city == "Tokyo") {
+      locationInfo = "東京";
+    } else {
+      locationInfo = city;  // その他の場合はそのまま表示
+    }
   } else {
     locationInfo = "Location: Unable to retrieve";
   }
