@@ -90,6 +90,8 @@ void displayLocation() {
     // 簡単なマッピングテーブル
     if (city == "Tokyo") {
       locationInfo = "東京";
+    } else if (city == "Saitama") {
+      locationInfo = "埼玉";
     } else {
       locationInfo = city;  // その他の場合はそのまま表示
     }
