@@ -2,6 +2,7 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
+#include "CUF_24px.h"  // フォントファイルをインクルード
 
 // WiFi設定
 const char* ssid = "googlemain";
@@ -32,6 +33,8 @@ void setup() {
   M5.Lcd.setTextSize(6);  // フォントサイズを大きくする
 
   displayLocation();  // 電源投入時に一度だけ位置情報を取得
+
+  //M5.Lcd.setFreeFont(&unicode_24px);  // 日本語表示用のフォントを設定
 }
 
 void loop() {
@@ -55,7 +58,9 @@ void displayTime() {
 
   int x = 0;
   int y = (240 - textHeight) / 2 - 20;
-
+  
+  M5.Lcd.setTextSize(1);
+  M5.Lcd.setTextFont(1);
   M5.Lcd.setTextSize(6);
 
   M5.Lcd.fillScreen(TFT_BLACK);
@@ -63,9 +68,13 @@ void displayTime() {
   M5.Lcd.println(timeString);
 
   // 現在地情報を表示
+  M5.Lcd.setFreeFont(&unicode_24px);
   M5.Lcd.setTextSize(2);
   M5.Lcd.setCursor(10, 200);
-  M5.Lcd.println(locationInfo);
+  //M5.Lcd.println(locationInfo);
+  // 日本語の表示部分でフォントを使用
+  //M5.Lcd.setFreeFont(&unicode_24px);
+  M5.Lcd.drawString(locationInfo, 10, 100);
 }
 
 void displayLocation() {
@@ -78,6 +87,7 @@ void displayLocation() {
     DynamicJsonDocument doc(1024);
     deserializeJson(doc, payload);
     String city = doc["city"].as<String>();
+
 
     // 簡単なマッピングテーブル
     if (city == "Tokyo") {
