@@ -1,6 +1,9 @@
 #include <M5Core2.h>
 #include <FS.h>
 #include <SD.h>
+#include <Audio.h>
+
+Audio audio;
 
 void setup() {
   // M5Stack Core2の初期化
@@ -20,6 +23,7 @@ void setup() {
   M5.Lcd.drawCentreString("Button 3", 240, 100, 4);
 }
 
+
 void playWavFile(const char *filename) {
   // WAVファイルを開く
   File file = SD.open(filename, FILE_READ);
@@ -29,15 +33,15 @@ void playWavFile(const char *filename) {
     return;
   }
 
-  // WAVファイルのヘッダー等を読み飛ばし、音声データ部分に移動する
-  // （この部分はファイル形式によって異なります）
-
-  // 音声データを読み込んで再生する
-  // ここに具体的な再生処理を記述
-  // ...
+  // Audioライブラリを使ってファイルから音声を再生
+  audio.connecttoFS(file, filename);
+  while(audio.isRunning()){
+    audio.loop();
+  }
 
   file.close();
 }
+
 
 void loop() {
   // M5Stack Core2の更新
