@@ -21,8 +21,22 @@ void setup() {
 }
 
 void playWavFile(const char *filename) {
-  // WAVファイルの再生ロジックをここに記述
+  // WAVファイルを開く
+  File file = SD.open(filename, FILE_READ);
+
+  if (!file) {
+    Serial.println("Failed to open file for reading");
+    return;
+  }
+
+  // WAVファイルのヘッダー等を読み飛ばし、音声データ部分に移動する
+  // （この部分はファイル形式によって異なります）
+
+  // 音声データを読み込んで再生する
+  // ここに具体的な再生処理を記述
   // ...
+
+  file.close();
 }
 
 void loop() {
