@@ -5,8 +5,8 @@
 #include "CUF_24px.h"  // フォントファイルをインクルード
 
 // WiFi設定
-const char* ssid = "googlemain";
-const char* password = "Fdsa@0813";
+const char* ssid = "20230616me_IPv6";
+const char* password = "asdf0616";
 
 // NTPサーバー
 const char* ntpServer = "pool.ntp.org";
@@ -89,7 +89,9 @@ void displayLocation() {
 
     // 簡単なマッピングテーブル
     if (city == "Tokyo") {
-      locationInfo = "東京";
+      locationInfo = "東京都";
+    } else if (city == "Chiyoda") {
+      locationInfo = "千代田区";
     } else {
       locationInfo = city;  // その他の場合はそのまま表示
     }
