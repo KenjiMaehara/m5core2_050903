@@ -2,7 +2,7 @@
 #include "CUF_24px.h"  // フォントファイルをインクルード
 
 extern void displayTime_every_second(); 
-extern String locationInfo;  // main.cpp など他のファイルで宣言された locationInfo を参照
+extern String gLocationInfo;  // main.cpp など他のファイルで宣言された gLocationInfo を参照
 
 void displayTime(int duration) {
   // 時刻を表示するコード
@@ -69,7 +69,7 @@ void displayLocationWeather(int duration) {
   M5.Lcd.setFreeFont(&unicode_24px);
   M5.Lcd.setTextSize(1);
   M5.Lcd.setCursor(10, 200);
-  M5.Lcd.drawString(locationInfo, 10, 200);
+  M5.Lcd.drawString(gLocationInfo, 10, 200);
 
   delay(duration);
 }
@@ -83,7 +83,7 @@ void displayTemperatureAndHumidity(int duration) {
   M5.Lcd.setFreeFont(&unicode_24px);
   M5.Lcd.setTextSize(1);
   M5.Lcd.setCursor(10, 200);
-  M5.Lcd.drawString(locationInfo, 10, 200);
+  M5.Lcd.drawString(gLocationInfo, 10, 200);
 
   delay(duration);
 }

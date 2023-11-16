@@ -1,7 +1,7 @@
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 
-extern String locationInfo;  // main.cpp など他のファイルで宣言された locationInfo を参照
+extern String gLocationInfo;  // main.cpp など他のファイルで宣言された gLocationInfo を参照
 
 void displayLocation() {
   HTTPClient http;
@@ -17,14 +17,14 @@ void displayLocation() {
 
     // 簡単なマッピングテーブル
     if (city == "Tokyo") {
-      locationInfo = "東京都";
+      gLocationInfo = "東京都";
     } else if (city == "Chiyoda") {
-      locationInfo = "千代田区";
+      gLocationInfo = "千代田区";
     } else {
-      locationInfo = city;  // その他の場合はそのまま表示
+      gLocationInfo = city;  // その他の場合はそのまま表示
     }
   } else {
-    locationInfo = "Location: Unable to retrieve";
+    gLocationInfo = "Location: Unable to retrieve";
   }
 
   http.end();

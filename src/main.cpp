@@ -12,7 +12,7 @@ const long  gmtOffset_sec = 3600 * 9;  // 日本のGMTオフセット（UTC+9）
 const int   daylightOffset_sec = 0;    // 夏時間は日本では適用されない
 
 // 現在地情報を格納するグローバル変数
-String locationInfo = "Location: Unknown";
+String gLocationInfo = "Location: Unknown";
 
 
 void displayLocation();  // 位置情報を取得する関数
