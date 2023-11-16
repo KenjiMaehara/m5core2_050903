@@ -63,24 +63,20 @@ void displayWeather(int duration) {
   delay(duration);
 }
 
-void displayLocationWeather_02(int duration) {
-  // 現在地の天気を表示するコード
-  M5.update();
-  M5.Lcd.fillScreen(TFT_BLACK);
-  // 現在地情報を表示
-  // 日本語の表示部分でフォントを使用
-  M5.Lcd.setFreeFont(&unicode_24px);
-  M5.Lcd.setTextSize(1);
-  M5.Lcd.setCursor(10, 200);
-  M5.Lcd.drawString(gLocationInfo, 10, 200);
-
-  delay(duration);
-}
-
 
 const char* apiKey = "Your_OpenWeatherMap_API_Key";  // APIキー
+extern String gCity;
 
 void displayLocationWeather(int duration) {
+
+  M5.update();
+  M5.Lcd.fillScreen(TFT_BLACK);
+
+  M5.Lcd.setTextSize(1);
+  M5.Lcd.setTextFont(1);
+  M5.Lcd.setTextSize(1);
+
+
   if (gLocationInfo != "Location: Unknown") {
     HTTPClient http;
     String weatherUrl = "http://api.openweathermap.org/data/2.5/weather?q=" + gLocationInfo + "&appid=" + String(apiKey) + "&units=metric";
@@ -96,7 +92,7 @@ void displayLocationWeather(int duration) {
 
       M5.Lcd.fillScreen(TFT_BLACK);
       M5.Lcd.setCursor(0, 0);
-      M5.Lcd.println("Location: " + gLocationInfo);
+      M5.Lcd.println("Location: " + gCity);
       M5.Lcd.println("Weather: " + weather);
       M5.Lcd.println("Temperature: " + String(temp) + " C");
     } else {
@@ -111,6 +107,22 @@ void displayLocationWeather(int duration) {
 
   delay(duration);
 }
+
+
+void displayLocationWeather_02(int duration) {
+  // 現在地の天気を表示するコード
+  M5.update();
+  M5.Lcd.fillScreen(TFT_BLACK);
+  // 現在地情報を表示
+  // 日本語の表示部分でフォントを使用
+  M5.Lcd.setFreeFont(&unicode_24px);
+  M5.Lcd.setTextSize(1);
+  M5.Lcd.setCursor(10, 200);
+  M5.Lcd.drawString(gLocationInfo, 10, 200);
+
+  delay(duration);
+}
+
 
 
 void displayTemperatureAndHumidity(int duration) {

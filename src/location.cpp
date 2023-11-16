@@ -2,6 +2,7 @@
 #include <ArduinoJson.h>
 
 extern String gLocationInfo;  // main.cpp など他のファイルで宣言された gLocationInfo を参照
+String gCity;
 
 void displayLocation() {
   HTTPClient http;
@@ -13,6 +14,7 @@ void displayLocation() {
     DynamicJsonDocument doc(1024);
     deserializeJson(doc, payload);
     String city = doc["city"].as<String>();
+    gCity = city;
 
 
     // 簡単なマッピングテーブル
