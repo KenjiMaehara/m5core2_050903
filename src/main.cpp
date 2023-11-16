@@ -14,7 +14,7 @@ const int   daylightOffset_sec = 0;    // 夏時間は日本では適用され�
 // 現在地情報を格納するグローバル変数
 String locationInfo = "Location: Unknown";
 
-void displayTime();
+
 void displayLocation();  // 位置情報を取得する関数
 
 void setup() {
@@ -35,8 +35,22 @@ void setup() {
   //M5.Lcd.setFreeFont(&unicode_24px);  // 日本語表示用のフォントを設定
 }
 
+
+extern void displayTime(int duration);
+extern void displayWeather(int duration);
+extern void displayLocationWeather(int duration);
+extern void displayTemperatureAndHumidity(int duration);
+
 void loop() {
-  M5.update();
-  displayTime();
-  delay(1000);  // 1秒ごとに更新
+  // 時刻を表示（10秒）
+  displayTime(10000);
+
+  // 天気情報を取得して表示（5秒）
+  displayWeather(5000);
+
+  // 現在地天気を表示（10秒）
+  displayLocationWeather(10000);
+
+  // 現在地の温度と湿度を表示（10秒）
+  displayTemperatureAndHumidity(10000);
 }

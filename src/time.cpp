@@ -4,7 +4,7 @@
 
 extern String locationInfo;  // main.cpp など他のファイルで宣言された locationInfo を参照
 
-void displayTime() {
+void displayTime_every_second() {
   struct tm timeinfo;
   if (!getLocalTime(&timeinfo)) {
     M5.Lcd.println("Failed to obtain time");
