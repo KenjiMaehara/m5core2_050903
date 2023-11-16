@@ -1,7 +1,5 @@
 #include <M5Core2.h>
 #include <WiFi.h>
-#include <HTTPClient.h>
-#include <ArduinoJson.h>
 #include "CUF_24px.h"  // フォントファイルをインクルード
 
 // WiFi設定
@@ -41,63 +39,4 @@ void loop() {
   M5.update();
   displayTime();
   delay(1000);  // 1秒ごとに更新
-}
-
-void displayTime() {
-  struct tm timeinfo;
-  if (!getLocalTime(&timeinfo)) {
-    M5.Lcd.println("Failed to obtain time");
-    return;
-  }
-
-  char timeString[10];
-  sprintf(timeString, "%02d:%02d:%02d", timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
-
-  int textWidth = M5.Lcd.textWidth(timeString);
-  int textHeight = 30;
-
-  int x = 0;
-  int y = (240 - textHeight) / 2 - 20;
-  
-  M5.Lcd.setTextSize(1);
-  M5.Lcd.setTextFont(1);
-  M5.Lcd.setTextSize(6);
-
-  M5.Lcd.fillScreen(TFT_BLACK);
-  M5.Lcd.setCursor(x, y);
-  M5.Lcd.println(timeString);
-
-  // 現在地情報を表示
-  // 日本語の表示部分でフォントを使用
-  M5.Lcd.setFreeFont(&unicode_24px);
-  M5.Lcd.setTextSize(1);
-  M5.Lcd.setCursor(10, 200);
-  M5.Lcd.drawString(locationInfo, 10, 200);
-}
-
-void displayLocation() {
-  HTTPClient http;
-  http.begin("http://ip-api.com/json/");
-  int httpCode = http.GET();
-
-  if (httpCode > 0) {
-    String payload = http.getString();
-    DynamicJsonDocument doc(1024);
-    deserializeJson(doc, payload);
-    String city = doc["city"].as<String>();
-
-
-    // 簡単なマッピングテーブル
-    if (city == "Tokyo") {
-      locationInfo = "東京都";
-    } else if (city == "Chiyoda") {
-      locationInfo = "千代田区";
-    } else {
-      locationInfo = city;  // その他の場合はそのまま表示
-    }
-  } else {
-    locationInfo = "Location: Unable to retrieve";
-  }
-
-  http.end();
 }
