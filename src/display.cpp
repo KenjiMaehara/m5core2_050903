@@ -74,7 +74,7 @@ void displayLocationWeather(int duration) {
 
   M5.Lcd.setTextSize(1);
   M5.Lcd.setTextFont(1);
-  M5.Lcd.setTextSize(1);
+  M5.Lcd.setTextSize(3);
 
 
   if (gLocationInfo != "Location: Unknown") {

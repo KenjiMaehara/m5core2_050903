@@ -21,9 +21,17 @@ void setup() {
   M5.begin();
   WiFi.begin(ssid, password);
 
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
+  int retryCount = 0;
+  while (WiFi.status() != WL_CONNECTED && retryCount < 5) {
+    delay(1000);
     M5.Lcd.println("Connecting to WiFi...");
+    retryCount++;
+  }
+
+  if (WiFi.status() != WL_CONNECTED) {
+    M5.Lcd.println("Failed to connect to WiFi. Please check your settings.");
+    // ここでリセットするか、エラー処理を行う
+    ESP.restart(); // デバイスをリセットする
   }
 
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
