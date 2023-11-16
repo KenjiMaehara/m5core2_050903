@@ -105,6 +105,13 @@ void displayLocationWeather(int duration) {
     M5.Lcd.println("Location information is not available.");
   }
 
+  // 現在地情報を表示
+  // 日本語の表示部分でフォントを使用
+  M5.Lcd.setFreeFont(&unicode_24px);
+  M5.Lcd.setTextSize(1);
+  M5.Lcd.setCursor(10, 200);
+  M5.Lcd.drawString(gLocationInfo, 10, 200);
+
   delay(duration);
 }
 
