@@ -1,6 +1,9 @@
 #include <M5Core2.h>
 #include "CUF_24px.h"  // フォントファイルをインクルード
 
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
+
 extern void displayTime_every_second(); 
 extern String gLocationInfo;  // main.cpp など他のファイルで宣言された gLocationInfo を参照
 
@@ -60,7 +63,7 @@ void displayWeather(int duration) {
   delay(duration);
 }
 
-void displayLocationWeather(int duration) {
+void displayLocationWeather_02(int duration) {
   // 現在地の天気を表示するコード
   M5.update();
   M5.Lcd.fillScreen(TFT_BLACK);
@@ -73,6 +76,42 @@ void displayLocationWeather(int duration) {
 
   delay(duration);
 }
+
+
+const char* apiKey = "Your_OpenWeatherMap_API_Key";  // APIキー
+
+void displayLocationWeather(int duration) {
+  if (gLocationInfo != "Location: Unknown") {
+    HTTPClient http;
+    String weatherUrl = "http://api.openweathermap.org/data/2.5/weather?q=" + gLocationInfo + "&appid=" + String(apiKey) + "&units=metric";
+    http.begin(weatherUrl);
+    int httpCode = http.GET();
+
+    if (httpCode > 0) {
+      String payload = http.getString();
+      DynamicJsonDocument doc(1024);
+      deserializeJson(doc, payload);
+      String weather = doc["weather"][0]["main"].as<String>();
+      float temp = doc["main"]["temp"].as<float>();
+
+      M5.Lcd.fillScreen(TFT_BLACK);
+      M5.Lcd.setCursor(0, 0);
+      M5.Lcd.println("Location: " + gLocationInfo);
+      M5.Lcd.println("Weather: " + weather);
+      M5.Lcd.println("Temperature: " + String(temp) + " C");
+    } else {
+      M5.Lcd.println("Error getting weather data");
+    }
+    http.end();
+  } else {
+    M5.Lcd.fillScreen(TFT_BLACK);
+    M5.Lcd.setCursor(0, 0);
+    M5.Lcd.println("Location information is not available.");
+  }
+
+  delay(duration);
+}
+
 
 void displayTemperatureAndHumidity(int duration) {
   // 温度と湿度を表示するコード
@@ -87,3 +126,4 @@ void displayTemperatureAndHumidity(int duration) {
 
   delay(duration);
 }
+
