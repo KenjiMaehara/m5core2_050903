@@ -17,7 +17,10 @@ void displayTime(int duration) {
   M5.update();
   M5.Lcd.fillScreen(TFT_BLACK);
 
+  M5.Lcd.setTextFont(1);
   M5.Lcd.setTextColor(TFT_WHITE);
+  M5.Lcd.setTextSize(8);
+
   M5.Lcd.drawJpgFile(SD, "/picture03.jpg", x_position, y_position);
 
   struct tm timeinfo;
@@ -37,10 +40,6 @@ void displayTime(int duration) {
   int x = (320 - textWidth) / 2;    // 画面の幅からテキストの幅を引いて2で割る
   int y = (240 - textHeight) / 2 - 20;
   
-  M5.Lcd.setTextSize(1);
-  M5.Lcd.setTextFont(1);
-  M5.Lcd.setTextSize(8);
-
   //M5.Lcd.fillScreen(TFT_BLACK);
   M5.Lcd.setCursor(x, y);
   M5.Lcd.println(timeString);
