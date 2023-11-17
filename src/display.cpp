@@ -83,7 +83,7 @@ void displayArea(int duration) {
 
   // 日本語の表示部分でフォントを使用
   M5.Lcd.setFreeFont(&unicode_24px);
-  M5.Lcd.setTextSize(4);
+  M5.Lcd.setTextSize(3);
  
   // テキストの幅と高さを取得
   int textWidth = M5.Lcd.textWidth(gLocationInfo);
@@ -113,7 +113,7 @@ extern String gCity;
 void displayLocationWeather(int duration) {
 
   M5.update();
-  M5.Lcd.fillScreen(TFT_BLACK);
+  //M5.Lcd.fillScreen(TFT_BLACK);
 
   M5.Lcd.setTextSize(1);
   M5.Lcd.setTextFont(1);
