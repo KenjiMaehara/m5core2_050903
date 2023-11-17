@@ -19,7 +19,7 @@ void displayTime(int duration) {
 
   M5.Lcd.setTextFont(1);
   M5.Lcd.setTextColor(TFT_WHITE);
-  M5.Lcd.setTextSize(8);
+  M5.Lcd.setTextSize(10);
 
   M5.Lcd.drawJpgFile(SD, "/picture03.jpg", x_position, y_position);
 
@@ -65,7 +65,7 @@ void displayWeather(int duration) {
 
   // テキストを中央に配置
   int x = (320 - textWidth) / 2;    // 画面の幅からテキストの幅を引いて2で割る
-  int y = (240 - textHeight) / 2;   // 画面の高さからテキストの高さを引いて2で割る
+  int y = (240 - textHeight) / 2 - 20;   // 画面の高さからテキストの高さを引いて2で割る
 
   M5.Lcd.setCursor(x, y);
   M5.Lcd.drawString("今日のてんき", x, y);
@@ -92,7 +92,7 @@ void displayArea(int duration) {
 
   // テキストを中央に配置
   int x = (320 - textWidth) / 2;    // 画面の幅からテキストの幅を引いて2で割る
-  int y = (240 - textHeight) / 2;   // 画面の高さからテキストの高さを引いて2で割る
+  int y = (240 - textHeight) / 2 - 20;   // 画面の高さからテキストの高さを引いて2で割る
 
   // テキストの色を赤に設定
   M5.Lcd.setTextColor(TFT_RED);
@@ -176,7 +176,8 @@ void displayLocationWeather(int duration) {
   // 日本語の表示部分でフォントを使用
   M5.Lcd.setFreeFont(&unicode_24px);
   M5.Lcd.setTextSize(1);
-  M5.Lcd.setCursor(10, 200);
+  M5.Lcd.setTextColor(TFT_WHITE);
+  M5.Lcd.setCursor(10, 200+20);
   //M5.Lcd.drawString(gLocationInfo, 10, 200);
 
   // 降水確率の表示
