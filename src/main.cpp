@@ -63,5 +63,5 @@ void loop() {
   displayLocationWeather(10000);
 
   // 現在地の温度と湿度を表示（10秒）
-  displayTemperatureAndHumidity(10000);
+  //displayTemperatureAndHumidity(10000);
 }
