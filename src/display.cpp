@@ -27,17 +27,19 @@ void displayTime(int duration) {
   }
 
   char timeString[10];
-  sprintf(timeString, "%02d:%02d:%02d", timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
+  //sprintf(timeString, "%02d:%02d:%02d", timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
+  sprintf(timeString, "%02d:%02d", timeinfo.tm_hour, timeinfo.tm_min);
 
   int textWidth = M5.Lcd.textWidth(timeString);
   int textHeight = 30;
 
-  int x = 0;
+  // テキストを中央に配置
+  int x = (320 - textWidth) / 2;    // 画面の幅からテキストの幅を引いて2で割る
   int y = (240 - textHeight) / 2 - 20;
   
   M5.Lcd.setTextSize(1);
   M5.Lcd.setTextFont(1);
-  M5.Lcd.setTextSize(6);
+  M5.Lcd.setTextSize(8);
 
   //M5.Lcd.fillScreen(TFT_BLACK);
   M5.Lcd.setCursor(x, y);
