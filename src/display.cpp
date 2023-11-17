@@ -113,6 +113,7 @@ extern String gCity;
 
 String gWeather;
 float gTemp;
+float precipitationProbability;
 
 
 void displayLocationWeather(int duration) {
@@ -138,6 +139,7 @@ void displayLocationWeather(int duration) {
       deserializeJson(doc, payload);
       gWeather = doc["weather"][0]["main"].as<String>();
       gTemp = doc["main"]["temp"].as<float>();
+      precipitationProbability = doc["list"][0]["pop"].as<float>() * 100; // 降水確率 (%)
 
       M5.Lcd.fillScreen(TFT_BLACK);
 
@@ -175,7 +177,10 @@ void displayLocationWeather(int duration) {
   M5.Lcd.setFreeFont(&unicode_24px);
   M5.Lcd.setTextSize(1);
   M5.Lcd.setCursor(10, 200);
-  M5.Lcd.drawString(gLocationInfo, 10, 200);
+  //M5.Lcd.drawString(gLocationInfo, 10, 200);
+
+  // 降水確率の表示
+  M5.Lcd.println("Precipitation Probability: " + String(precipitationProbability) + "%");
 
   delay(duration);
 }
