@@ -48,6 +48,7 @@ extern void displayTime(int duration);
 extern void displayWeather(int duration);
 extern void displayLocationWeather(int duration);
 extern void displayTemperatureAndHumidity(int duration);
+extern void displayArea(int duration);
 
 void loop() {
   // 時刻を表示（10秒）
@@ -55,6 +56,8 @@ void loop() {
 
   // 天気情報を取得して表示（5秒）
   displayWeather(5000);
+
+  displayArea(5000);
 
   // 現在地天気を表示（10秒）
   displayLocationWeather(10000);
