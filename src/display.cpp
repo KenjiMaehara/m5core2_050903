@@ -64,7 +64,8 @@ void displayWeather(int duration) {
 }
 
 
-const char* apiKey = "Your_OpenWeatherMap_API_Key";  // APIキー
+//const char* apiKey = "Your_OpenWeatherMap_API_Key";  // APIキー
+const char* apiKey = "4f97d65fe992fea7e3a6ab1f6fdb0ab8";  // APIキー
 extern String gCity;
 
 void displayLocationWeather(int duration) {
@@ -79,7 +80,8 @@ void displayLocationWeather(int duration) {
 
   if (gLocationInfo != "Location: Unknown") {
     HTTPClient http;
-    String weatherUrl = "http://api.openweathermap.org/data/2.5/weather?q=" + gLocationInfo + "&appid=" + String(apiKey) + "&units=metric";
+    //String weatherUrl = "http://api.openweathermap.org/data/2.5/weather?q=" + gLocationInfo + "&appid=" + String(apiKey) + "&units=metric";
+    String weatherUrl = "http://api.openweathermap.org/data/2.5/weather?q=" + gCity + "&appid=" + String(apiKey) + "&units=metric";
     http.begin(weatherUrl);
     int httpCode = http.GET();
 
