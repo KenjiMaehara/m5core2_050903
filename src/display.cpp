@@ -95,7 +95,7 @@ void displayArea(int duration) {
   int y = (240 - textHeight) / 2 - 20;   // 画面の高さからテキストの高さを引いて2で割る
 
   // テキストの色を赤に設定
-  M5.Lcd.setTextColor(TFT_RED);
+  M5.Lcd.setTextColor(TFT_WHITE);
   M5.Lcd.setCursor(x, y);
   M5.Lcd.drawString(gLocationInfo, x, y);
 
