@@ -111,6 +111,10 @@ void displayArea(int duration) {
 const char* apiKey = "4f97d65fe992fea7e3a6ab1f6fdb0ab8";  // APIキー
 extern String gCity;
 
+String gWeather;
+float gTemp;
+
+
 void displayLocationWeather(int duration) {
 
   M5.update();
@@ -123,7 +127,7 @@ void displayLocationWeather(int duration) {
 
   if (gLocationInfo != "Location: Unknown") {
     HTTPClient http;
-    //String weatherUrl = "http://api.openweathermap.org/data/2.5/weather?q=" + gLocationInfo + "&appid=" + String(apiKey) + "&units=metric";
+
     String weatherUrl = "http://api.openweathermap.org/data/2.5/weather?q=" + gCity + "&appid=" + String(apiKey) + "&units=metric";
     http.begin(weatherUrl);
     int httpCode = http.GET();
@@ -132,33 +136,25 @@ void displayLocationWeather(int duration) {
       String payload = http.getString();
       DynamicJsonDocument doc(1024);
       deserializeJson(doc, payload);
-      String weather = doc["weather"][0]["main"].as<String>();
-      float temp = doc["main"]["temp"].as<float>();
+      gWeather = doc["weather"][0]["main"].as<String>();
+      gTemp = doc["main"]["temp"].as<float>();
 
       M5.Lcd.fillScreen(TFT_BLACK);
 
       #if 1
       M5.Lcd.setCursor(0, 0);
       M5.Lcd.println("Location: " + gCity);
-      M5.Lcd.println("Weather: " + weather);
-      M5.Lcd.println("Temperature: " + String(temp) + " C");
+      M5.Lcd.println("Weather: " + gWeather);
+      M5.Lcd.println("Temperature: " + String(gTemp) + " C");
       #endif
 
-      #if 0
-      if (weather == "Clear") {
-        M5.Lcd.drawBitmap(x_position, y_position,  icon_width, icon_height, (uint16_t *)sunny_icon.bmp);
-      } else if (weather == "Clouds") {
-        M5.Lcd.drawBitmap(x_position, y_position,  icon_width, icon_height, (uint16_t *)cloudy_icon.bmp);
-      } else if (weather == "Rain") {
-        M5.Lcd.drawBitmap(x_position, y_position,  icon_width, icon_height, (uint16_t *)rainy_icon.bmp);
-      }
-      #endif
 
-      if (weather == "Clear") {
+
+      if (gWeather == "Clear") {
         M5.Lcd.drawJpgFile(SD, "/sunny_icon.jpg", x_position, y_position);
-      } else if (weather == "Clouds") {
+      } else if (gWeather == "Clouds") {
         M5.Lcd.drawJpgFile(SD, "/cloudy_icon.jpg", x_position, y_position);
-      } else if (weather == "Rain") {
+      } else if (gWeather == "Rain") {
         M5.Lcd.drawJpgFile(SD, "/rainy_icon.jpg", x_position, y_position);
       }
 
