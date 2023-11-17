@@ -7,6 +7,11 @@
 extern void displayTime_every_second(); 
 extern String gLocationInfo;  // main.cpp など他のファイルで宣言された gLocationInfo を参照
 
+int x_position = 0;
+int y_position = 0;
+int icon_width = 64;
+int icon_height = 64;
+
 void displayTime(int duration) {
   // 時刻を表示するコード
   M5.update();
@@ -43,6 +48,8 @@ void displayWeather(int duration) {
   // 天気情報を取得して表示するコード
   M5.update();
   M5.Lcd.fillScreen(TFT_BLACK);
+
+  M5.Lcd.drawJpgFile(SD, "/picture01.jpg", x_position, y_position);
 
   // 日本語の表示部分でフォントを使用
   M5.Lcd.setFreeFont(&unicode_24px);
@@ -93,10 +100,34 @@ void displayLocationWeather(int duration) {
       float temp = doc["main"]["temp"].as<float>();
 
       M5.Lcd.fillScreen(TFT_BLACK);
+
+      #if 1
       M5.Lcd.setCursor(0, 0);
       M5.Lcd.println("Location: " + gCity);
       M5.Lcd.println("Weather: " + weather);
       M5.Lcd.println("Temperature: " + String(temp) + " C");
+      #endif
+
+      #if 0
+      if (weather == "Clear") {
+        M5.Lcd.drawBitmap(x_position, y_position,  icon_width, icon_height, (uint16_t *)sunny_icon.bmp);
+      } else if (weather == "Clouds") {
+        M5.Lcd.drawBitmap(x_position, y_position,  icon_width, icon_height, (uint16_t *)cloudy_icon.bmp);
+      } else if (weather == "Rain") {
+        M5.Lcd.drawBitmap(x_position, y_position,  icon_width, icon_height, (uint16_t *)rainy_icon.bmp);
+      }
+      #endif
+
+      if (weather == "Clear") {
+        M5.Lcd.drawJpgFile(SD, "/sunny_icon.jpg", x_position, y_position);
+      } else if (weather == "Clouds") {
+        M5.Lcd.drawJpgFile(SD, "/cloudy_icon.jpg", x_position, y_position);
+      } else if (weather == "Rain") {
+        M5.Lcd.drawJpgFile(SD, "/rainy_icon.jpg", x_position, y_position);
+      }
+
+
+
     } else {
       M5.Lcd.println("Error getting weather data");
     }
