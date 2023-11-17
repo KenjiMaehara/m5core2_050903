@@ -180,7 +180,7 @@ void displayLocationWeather(int duration) {
   //M5.Lcd.drawString(gLocationInfo, 10, 200);
 
   // 降水確率の表示
-  M5.Lcd.println("Precipitation Probability: " + String(precipitationProbability) + "%");
+  M5.Lcd.println("降水確率: " + String(precipitationProbability) + "%");
 
   delay(duration);
 }
