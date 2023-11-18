@@ -1,15 +1,18 @@
 #include <M5Core2.h>
 #include <WiFi.h>
 #include "CUF_24px.h"  // フォントファイルをインクルード
+#include "wifi_config.h" // WiFi設定を含むファイルをインクルード
 
-// WiFi設定
-const char* ssid = "20230616me_IPv6";
-const char* password = "asdf0616";
 
 // NTPサーバー
 const char* ntpServer = "pool.ntp.org";
 const long  gmtOffset_sec = 3600 * 9;  // 日本のGMTオフセット（UTC+9）
 const int   daylightOffset_sec = 0;    // 夏時間は日本では適用されない
+
+
+//extern const char* ssid;
+//extern const char* password;
+
 
 // 現在地情報を格納するグローバル変数
 String gLocationInfo = "Location: Unknown";

@@ -3,6 +3,7 @@
 
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
+#include "wifi_config.h" // WiFi設定を含むファイルをインクルード
 
 extern void displayTime_every_second(); 
 extern String gLocationInfo;  // main.cpp など他のファイルで宣言された gLocationInfo を参照
@@ -105,10 +106,11 @@ void displayArea(int duration) {
 
 
 
-
+//extern const char* apiKey;
+//extern const char* apiKey;  // APIキー
 
 //const char* apiKey = "Your_OpenWeatherMap_API_Key";  // APIキー
-const char* apiKey = "4f97d65fe992fea7e3a6ab1f6fdb0ab8";  // APIキー
+
 extern String gCity;
 
 String gWeather;
