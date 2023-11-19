@@ -1,6 +1,6 @@
 #include "wifi_config.h"
 // WiFi設定
-const char* ssid = "yourSsid";
-const char* password = "yourPassword";
+const char* ssid = "googlemain";
+const char* password = "Fdsa@0813";
 
-const char* apiKey = "Your_OpenWeatherMap_API_Key";  // APIキー
+const char* apiKey = "4983af156edd72121a9a853232b355c5";  // APIキー
