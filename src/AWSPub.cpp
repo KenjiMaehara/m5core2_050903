@@ -68,6 +68,12 @@ void setupAWSIoT() {
 
   readAWSDeviceName();
 
+   if(!SPIFFS.begin(true)){
+    Serial.println("SPIFFSの初期化に失敗しました。");
+    return;
+  }
+
+
   // Amazon Root CA 1証明書を読み込む
   File ca = SPIFFS.open("/AmazonRootCA1.pem", "r");
   if (!ca) {
@@ -81,6 +87,12 @@ void setupAWSIoT() {
       net.setCACert(caContent.c_str());
       ca.close();
   }
+
+   if(!SPIFFS.begin(true)){
+    Serial.println("SPIFFSの初期化に失敗しました。");
+    return;
+  }
+
 
   // 拡張子に基づいて証明書とキーを読み込む
   String certificateContent = SPIFFSRead::readFirstFileWithExtension(".cert.pem");
