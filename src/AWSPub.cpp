@@ -18,12 +18,55 @@ const int aws_port = 8883;
 WiFiClientSecure net;
 PubSubClient client(net);
 
+
+void readAWSDeviceName() {
+    if(!SPIFFS.begin(true)){
+        Serial.println("SPIFFSの初期化に失敗しました。");
+        return;
+    }
+
+    // AWS設定ファイルを開く
+    File configFile = SPIFFS.open("/aws_devicename.conf", "r");
+    if (!configFile) {
+        Serial.println("AWS設定ファイルを開くことができませんでした。");
+        return;
+    }
+
+    // ファイルからデバイス名とエンドポイントを読み込む
+    String awsDeviceName, awsEndpoint;
+    while(configFile.available()) {
+        String line = configFile.readStringUntil('\n');
+        line.trim();
+        int separatorIndex = line.indexOf(':');
+        if (separatorIndex != -1) {
+            String key = line.substring(0, separatorIndex);
+            String value = line.substring(separatorIndex + 1);
+
+            if (key == "AWS_DEVICE_NAME") {
+                awsDeviceName = value;
+            } else if (key == "AWS_IOT_ENDPOINT") {
+                awsEndpoint = value;
+            }
+        }
+    }
+    configFile.close();
+
+    // 変数に読み込んだ値を設定
+    const char* aws_endpoint = awsEndpoint.c_str();
+    const char* deviceName = awsDeviceName.c_str();
+    Serial.println("AWS IoTエンドポイント: " + awsEndpoint);
+    Serial.println("デバイス名: " + awsDeviceName);
+}
+
+
 void setupAWSIoT() {
 
    if(!SPIFFS.begin(true)){
     Serial.println("SPIFFSの初期化に失敗しました。");
     return;
   }
+
+  readAWSDeviceName();
 
   // 拡張子に基づいて証明書とキーを読み込む
   String certificateContent = SPIFFSRead::readFirstFileWithExtension(".cert.pem");
