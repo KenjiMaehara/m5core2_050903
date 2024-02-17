@@ -5,6 +5,7 @@
 #include "AWSPub.h"
 #include "FS.h"
 #include "SPIFFS.h"
+#include "wifiConfig.h"
 
 // WiFi設定
 const char* ssid = "YOUR_WIFI_SSID";
@@ -18,13 +19,8 @@ void setup() {
 
   SPIFFS_check();
 
-  M5.begin();
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-  }
-
   setupAWSIoT();
+
 
   
 }
