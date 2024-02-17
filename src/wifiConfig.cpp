@@ -4,11 +4,6 @@
 #include "wifiConfig.h"  // このスケッチのヘッダファイル
 
 void connectToWiFi() {
-  if (!SPIFFS.begin()) {
-    Serial.println("SPIFFSの初期化に失敗しました。");
-    return;
-  }
-
   File wifiConfig = SPIFFS.open("/wifi_SSID.conf", "r");
   if (!wifiConfig) {
     Serial.println("設定ファイルのオープンに失敗しました。");
@@ -16,17 +11,27 @@ void connectToWiFi() {
   }
 
   while (wifiConfig.available()) {
-    String ssid = wifiConfig.readStringUntil(',');
-    String password = wifiConfig.readStringUntil('\n');
-    ssid.trim(); // 余分な空白や改行を削除
+    String line = wifiConfig.readStringUntil('\n');
+    if (line.startsWith("#") || line.length() == 0) continue; // コメントまたは空行をスキップ
+
+    int commaIndex = line.indexOf(',');
+    if (commaIndex == -1) continue; // コンマが見つからない行をスキップ
+
+    String ssid = line.substring(0, commaIndex);
+    String password = line.substring(commaIndex + 1);
+
+    ssid.trim();
     password.trim();
 
-    WiFi.begin(ssid.c_str(), password.c_str());
     Serial.print("接続を試みています: ");
-    Serial.println(ssid);
+    Serial.print(ssid);
+    Serial.print(" パスワード長: ");
+    Serial.println(password.length()); // パスワードの長さを出力
+
+    WiFi.begin(ssid.c_str(), password.c_str());
 
     int attempts = 0;
-    while (WiFi.status() != WL_CONNECTED && attempts < 30) { // 15秒間接続を試みる
+    while (WiFi.status() != WL_CONNECTED && attempts < 30) {
       delay(500);
       Serial.print(".");
       attempts++;
@@ -36,7 +41,7 @@ void connectToWiFi() {
       Serial.println("\nWiFiに接続しました。");
       Serial.print("IPアドレス: ");
       Serial.println(WiFi.localIP());
-      return; // 接続に成功したらループを抜ける
+      return;
     } else {
       Serial.println("\n接続に失敗しました。次のSSIDを試します。");
     }

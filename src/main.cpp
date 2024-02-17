@@ -18,10 +18,13 @@ void setup() {
 
   SPIFFS_check();
 
+  connectToWiFi();
+  while(1);
+
   setupAWSIoT();
 
 
-  while(1);
+
 }
 
 
