@@ -11,4 +11,6 @@ public:
     static String readFirstFileWithExtension(const String &extension);
 };
 
+void SPIFFS_check();
+
 #endif
