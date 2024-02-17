@@ -1,30 +1,15 @@
 #include "AWSPub.h"
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>
+#include "FS.h"
+#include "SPIFFS.h"
+#include "SPIFFSRead.h"
 
 // AWS IoT設定
 const char* aws_endpoint = "YOUR_AWS_IOT_ENDPOINT"; // AWS IoTエンドポイント
 const char* deviceName = "YOUR_DEVICE_NAME";
 const int aws_port = 8883;
 
-// 証明書
-const char* rootCA = R"EOF(
------BEGIN CERTIFICATE-----
-YOUR_ROOT_CA_CERTIFICATE
------END CERTIFICATE-----
-)EOF";
-
-const char* certificate = R"KEY(
------BEGIN CERTIFICATE-----
-YOUR_DEVICE_CERTIFICATE
------END CERTIFICATE-----
-)KEY";
-
-const char* privateKey = R"KEY(
------BEGIN RSA PRIVATE KEY-----
-YOUR_DEVICE_PRIVATE_KEY
------END RSA PRIVATE KEY-----
-)KEY";
 
 
 // AWS IoT設定（エンドポイント、認証情報など）
@@ -34,11 +19,24 @@ WiFiClientSecure net;
 PubSubClient client(net);
 
 void setupAWSIoT() {
-  net.setCACert(rootCA);
-  net.setCertificate(certificate);
-  net.setPrivateKey(privateKey);
 
-  client.setServer(aws_endpoint, aws_port);
+   if(!SPIFFS.begin(true)){
+    Serial.println("SPIFFSの初期化に失敗しました。");
+    return;
+  }
+
+  // 拡張子に基づいて証明書とキーを読み込む
+  String certificateContent = SPIFFSRead::readFirstFileWithExtension(".cert.pem");
+  String privateKeyContent = SPIFFSRead::readFirstFileWithExtension(".private.key");
+
+  // 読み込んだ内容でセットアップ
+  if(certificateContent.length() > 0 && privateKeyContent.length() > 0) {
+    net.setCertificate(certificateContent.c_str());
+    net.setPrivateKey(privateKeyContent.c_str());
+  } else {
+    Serial.println("証明書またはプライベートキーが見つかりませんでした。");
+  }
+
 
   // タスクの作成と開始
   xTaskCreatePinnedToCore(
