@@ -26,10 +26,6 @@ YOUR_DEVICE_PRIVATE_KEY
 -----END RSA PRIVATE KEY-----
 )KEY";
 
-WiFiClientSecure net;
-PubSubClient client(net);
-
-
 
 // AWS IoT設定（エンドポイント、認証情報など）
 // 以前の設定をここに移動
@@ -38,11 +34,37 @@ WiFiClientSecure net;
 PubSubClient client(net);
 
 void setupAWSIoT() {
-  // WiFi接続とAWS IoTの設定
-  // 以前のsetup関数から関連部分をここに移動
+  net.setCACert(rootCA);
+  net.setCertificate(certificate);
+  net.setPrivateKey(privateKey);
+
+  client.setServer(aws_endpoint, aws_port);
+
+  // タスクの作成と開始
+  xTaskCreatePinnedToCore(
+    sendDataToAWS, /* タスク関数 */
+    "SendAWSTask", /* タスク名 */
+    10000,         /* スタックサイズ */
+    NULL,          /* タスクパラメータ */
+    1,             /* 優先度 */
+    NULL,          /* タスクハンドル */
+    0              /* コアID */
+  );
 }
 
-void sendDataToAWS(void * parameter) {
-  // データ送信処理
-  // 以前のsendDataToAWS関数の内容をここに移動
+// AWSへデータを送信するタスク
+void sendDataToAWS(void * parameter){
+  for(;;){ // 無限ループ
+    if (!client.connected()) {
+      while (!client.connect(deviceName)) {
+        delay(1000);
+      }
+    }
+
+    // データをAWS IoTに送信
+    String payload = "{\"temperature\": 25.5}";
+    client.publish("topic/path", payload.c_str());
+
+    delay(60000); // 1分ごとに送信
+  }
 }
