@@ -68,6 +68,20 @@ void setupAWSIoT() {
 
   readAWSDeviceName();
 
+  // Amazon Root CA 1証明書を読み込む
+  File ca = SPIFFS.open("/AmazonRootCA1.pem", "r");
+  if (!ca) {
+      Serial.println("CA証明書ファイルの読み込みに失敗しました。");
+  } else {
+      Serial.println("CA証明書ファイルを読み込みました。");
+      String caContent = "";
+      while (ca.available()) {
+          caContent += char(ca.read());
+      }
+      net.setCACert(caContent.c_str());
+      ca.close();
+  }
+
   // 拡張子に基づいて証明書とキーを読み込む
   String certificateContent = SPIFFSRead::readFirstFileWithExtension(".cert.pem");
   String privateKeyContent = SPIFFSRead::readFirstFileWithExtension(".private.key");
@@ -76,6 +90,12 @@ void setupAWSIoT() {
   if(certificateContent.length() > 0 && privateKeyContent.length() > 0) {
     net.setCertificate(certificateContent.c_str());
     net.setPrivateKey(privateKeyContent.c_str());
+
+    // 内容の長さを出力する
+    Serial.print("証明書の長さ: ");
+    Serial.println(certificateContent.length());
+    Serial.print("プライベートキーの長さ: ");
+    Serial.println(privateKeyContent.length());
   } else {
     Serial.println("証明書またはプライベートキーが見つかりませんでした。");
   }
