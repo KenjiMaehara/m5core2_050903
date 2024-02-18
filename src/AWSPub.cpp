@@ -52,8 +52,10 @@ void readAWSDeviceName() {
     configFile.close();
 
     // 変数に読み込んだ値を設定
-    const char* aws_endpoint = awsEndpoint.c_str();
-    const char* deviceName = awsDeviceName.c_str();
+    //const char* aws_endpoint = awsEndpoint.c_str();
+    //const char* deviceName = awsDeviceName.c_str();
+    aws_endpoint = awsEndpoint.c_str();
+    deviceName = awsDeviceName.c_str();
     Serial.println("AWS IoTエンドポイント: " + awsEndpoint);
     Serial.println("デバイス名: " + awsDeviceName);
 }
