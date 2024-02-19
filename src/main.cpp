@@ -18,7 +18,13 @@ void setup() {
 
   SPIFFS_check();
 
+  IPAddress dns(8,8,8,8); // GoogleのDNS
+  WiFi.config(IPAddress(0,0,0,0), IPAddress(0,0,0,0), IPAddress(0,0,0,0), dns);
+  
   connectToWiFi();
+
+
+  delay(5000);
 
 
   setupAWSIoT();

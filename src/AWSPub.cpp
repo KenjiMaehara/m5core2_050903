@@ -10,6 +10,7 @@ const char* aws_endpoint = "YOUR_AWS_IOT_ENDPOINT"; // AWS IoTエンドポイン
 const char* deviceName = "YOUR_DEVICE_NAME";
 const int aws_port = 8883;
 
+String sanitizeEndpoint(String endpoint);
 
 
 // AWS IoT設定（エンドポイント、認証情報など）
@@ -54,6 +55,7 @@ void readAWSDeviceName() {
     // 変数に読み込んだ値を設定
     //const char* aws_endpoint = awsEndpoint.c_str();
     //const char* deviceName = awsDeviceName.c_str();
+    awsEndpoint = sanitizeEndpoint(awsEndpoint);
     aws_endpoint = awsEndpoint.c_str();
     deviceName = awsDeviceName.c_str();
     Serial.println("AWS IoTエンドポイント: " + awsEndpoint);
@@ -117,8 +119,9 @@ void setupAWSIoT() {
     Serial.println("証明書またはプライベートキーが見つかりませんでした。");
   }
 
+  client.setClient(net);
   // AWS IoTエンドポイントの設定
-  client.setServer(aws_endpoint, 8883);
+  client.setServer(aws_endpoint, aws_port);
 
 
   // タスクの作成と開始
@@ -148,4 +151,13 @@ void sendDataToAWS(void * parameter){
 
     delay(60000); // 1分ごとに送信
   }
+}
+
+
+String sanitizeEndpoint(String endpoint) {
+    // ここでエンドポイントの検証と処理を行う
+    // 例: 不要なスペースや特殊文字を除去
+    endpoint.trim(); // 先頭と末尾の空白を除去
+    // 必要に応じて、他の不要な文字を除去する処理を追加
+    return endpoint;
 }
