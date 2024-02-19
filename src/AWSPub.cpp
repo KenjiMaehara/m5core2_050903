@@ -77,7 +77,7 @@ void setupAWSIoT() {
 
 
   // Amazon Root CA 1証明書を読み込む
-  File ca = SPIFFS.open("/AmazonRootCA1.pem", "r");
+  File ca = SPIFFS.open("/key/AmazonRootCA1.pem", "r");
   if (!ca) {
       Serial.println("CA証明書ファイルの読み込みに失敗しました。");
   } else {
@@ -86,6 +86,9 @@ void setupAWSIoT() {
       while (ca.available()) {
           caContent += char(ca.read());
       }
+      Serial.print("CA証明書の内容の長さ: ");
+      Serial.println(caContent.length()); // 読み込んだCA証明書の内容の長さを表示
+
       net.setCACert(caContent.c_str());
       ca.close();
   }
