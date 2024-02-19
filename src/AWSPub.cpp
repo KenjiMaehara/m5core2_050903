@@ -117,6 +117,9 @@ void setupAWSIoT() {
     Serial.println("証明書またはプライベートキーが見つかりませんでした。");
   }
 
+  // AWS IoTエンドポイントの設定
+  client.setServer(aws_endpoint, 8883);
+
 
   // タスクの作成と開始
   xTaskCreatePinnedToCore(
