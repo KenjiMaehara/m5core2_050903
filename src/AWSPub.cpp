@@ -100,10 +100,26 @@ void setupAWSIoT() {
     return;
   }
 
-
+  #if 0
   // 拡張子に基づいて証明書とキーを読み込む
   String certificateContent = SPIFFSRead::readFirstFileWithExtension(".cert.pem");
   String privateKeyContent = SPIFFSRead::readFirstFileWithExtension(".private.key");
+  #endif
+
+  File cert = SPIFFS.open("/key/MELDevice0004.cert.pem", "r");
+  String certificateContent = "";
+  while(cert.available()){
+      certificateContent += char(cert.read());
+  }
+  cert.close();
+
+  File key = SPIFFS.open("/key/MELDevice0004.private.key", "r");
+  String privateKeyContent = "";
+  while(key.available()){
+      privateKeyContent += char(key.read());
+  }
+  key.close();
+
 
   // 読み込んだ内容でセットアップ
   if(certificateContent.length() > 0 && privateKeyContent.length() > 0) {
