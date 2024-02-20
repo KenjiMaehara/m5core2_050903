@@ -1,4 +1,5 @@
 #include "AWSPub.h"
+#include <WiFiClient.h>
 #include <WiFiClientSecure.h>
 #include <PubSubClient.h>
 #include "FS.h"
@@ -128,7 +129,7 @@ void setupAWSIoT() {
   xTaskCreatePinnedToCore(
     sendDataToAWS, /* タスク関数 */
     "SendAWSTask", /* タスク名 */
-    10000,         /* スタックサイズ */
+    10000 * 2,         /* スタックサイズ */
     NULL,          /* タスクパラメータ */
     1,             /* 優先度 */
     NULL,          /* タスクハンドル */
@@ -141,6 +142,9 @@ void sendDataToAWS(void * parameter){
   for(;;){ // 無限ループ
     if (!client.connected()) {
       while (!client.connect(deviceName)) {
+        Serial.print("Connect Failed. Error state=");
+        Serial.print(client.state());
+        Serial.println("");
         delay(1000);
       }
     }
