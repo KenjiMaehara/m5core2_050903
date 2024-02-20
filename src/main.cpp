@@ -27,6 +27,18 @@ void setup() {
 
   delay(1000);
 
+  // DNS解決テスト
+  Serial.print("www.yahoo.comのIPアドレスを解決しています...");
+  IPAddress remote_ip;
+  if(WiFi.hostByName("www.yahoo.com", remote_ip)) {
+    Serial.print("成功: ");
+    Serial.println(remote_ip);
+  } else {
+    Serial.println("失敗: 名前解決に失敗しました。");
+  }
+
+  while(1);
+
 
   setupAWSIoT();
 
