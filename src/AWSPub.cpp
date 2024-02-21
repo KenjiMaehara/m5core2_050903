@@ -97,6 +97,8 @@ void setupAWSIoT() {
       Serial.print("CA証明書の内容の長さ: ");
       Serial.println(caContent.length()); // 読み込んだCA証明書の内容の長さを表示
 
+      caContent.trim();
+
       net.setCACert(caContent.c_str());
       ca.close();
   }
@@ -113,6 +115,10 @@ void setupAWSIoT() {
 
   // 読み込んだ内容でセットアップ
   if(certificateContent.length() > 0 && privateKeyContent.length() > 0) {
+
+    certificateContent.trim();
+    privateKeyContent.trim();
+
     net.setCertificate(certificateContent.c_str());
     net.setPrivateKey(privateKeyContent.c_str());
 
@@ -127,7 +133,7 @@ void setupAWSIoT() {
 
   //client.setClient(net);
   // AWS IoTエンドポイントの設定
-  client.setServer(aws_endpoint, aws_port);
+  client.setServer("am5y9zzdy09g0-ats.iot.us-east-1.amazonaws.com", 8883);
 
 
   // タスクの作成と開始
@@ -146,7 +152,7 @@ void setupAWSIoT() {
 void sendDataToAWS(void * parameter){
   for(;;){ // 無限ループ
     if (!client.connected()) {
-      while (!client.connect(deviceName)) {
+      while (!client.connect("MELDevice0007")) {
         delay(1000);
       }
     }

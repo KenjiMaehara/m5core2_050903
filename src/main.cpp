@@ -24,7 +24,7 @@ void setup() {
   connectToWiFi();
 
 
-  delay(5000);
+  delay(1000);
 
 
   setupAWSIoT();
