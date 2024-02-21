@@ -39,5 +39,6 @@ void setup() {
 
 void loop() {
   // ここでは何もしない
+  delay(100);
 }
 

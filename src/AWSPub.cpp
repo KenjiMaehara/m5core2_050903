@@ -56,8 +56,14 @@ void readAWSDeviceName() {
     //const char* aws_endpoint = awsEndpoint.c_str();
     //const char* deviceName = awsDeviceName.c_str();
     awsEndpoint = sanitizeEndpoint(awsEndpoint);
-    aws_endpoint = awsEndpoint.c_str();
-    deviceName = awsDeviceName.c_str();
+
+    std::string temp = "\"" + std::string(awsEndpoint.c_str()) + "\"";
+    aws_endpoint = temp.c_str();
+    std::string temp02 = "\"" + std::string(awsDeviceName.c_str()) + "\"";
+    deviceName = temp02.c_str();
+
+    //aws_endpoint = awsEndpoint.c_str();
+    //deviceName = awsDeviceName.c_str();
     Serial.println("AWS IoTエンドポイント: " + awsEndpoint);
     Serial.println("デバイス名: " + awsDeviceName);
 }
