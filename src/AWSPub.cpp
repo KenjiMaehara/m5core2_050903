@@ -92,6 +92,7 @@ void setupAWSIoT() {
       Serial.print("CA証明書の内容の長さ: ");
       Serial.println(caContent.length()); // 読み込んだCA証明書の内容の長さを表示
 
+      caContent.trim();
       net.setCACert(caContent.c_str());
       ca.close();
   }
@@ -105,6 +106,9 @@ void setupAWSIoT() {
   // 拡張子に基づいて証明書とキーを読み込む
   String certificateContent = SPIFFSRead::readFirstFileWithExtension(".cert.pem");
   String privateKeyContent = SPIFFSRead::readFirstFileWithExtension(".private.key");
+
+  certificateContent.trim();
+  privateKeyContent.trim();
 
   // 読み込んだ内容でセットアップ
   if(certificateContent.length() > 0 && privateKeyContent.length() > 0) {
@@ -129,7 +133,7 @@ void setupAWSIoT() {
   xTaskCreatePinnedToCore(
     sendDataToAWS, /* タスク関数 */
     "SendAWSTask", /* タスク名 */
-    10000 * 2,         /* スタックサイズ */
+    10000,         /* スタックサイズ */
     NULL,          /* タスクパラメータ */
     1,             /* 優先度 */
     NULL,          /* タスクハンドル */

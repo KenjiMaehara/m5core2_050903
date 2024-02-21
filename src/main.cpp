@@ -37,7 +37,7 @@ void setup() {
     Serial.println("失敗: 名前解決に失敗しました。");
   }
 
-  while(1);
+  //while(1);
 
 
   setupAWSIoT();
