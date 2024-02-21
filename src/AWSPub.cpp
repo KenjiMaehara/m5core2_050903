@@ -121,6 +121,7 @@ void sendDataToAWS(void * parameter){
     // データをAWS IoTに送信
     String payload = "{\"temperature\": 25.5}";
     client.publish("topic/path", payload.c_str());
+    Serial.println("AWS IoTにデータを送信しました");
 
     delay(60000); // 1分ごとに送信
   }
