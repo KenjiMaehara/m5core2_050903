@@ -20,6 +20,7 @@ String sanitizeEndpoint(String endpoint);
 WiFiClientSecure net;
 PubSubClient client(net);
 
+void callback(char *topic, byte *payload, unsigned int length);
 
 void readAWSDeviceName() {
     if(!SPIFFS.begin(true)){
@@ -124,10 +125,10 @@ void setupAWSIoT() {
     Serial.println("証明書またはプライベートキーが見つかりませんでした。");
   }
 
-  client.setClient(net);
+  //client.setClient(net);
   // AWS IoTエンドポイントの設定
   client.setServer(aws_endpoint, aws_port);
-
+  client.setCallback(callback);
 
   // タスクの作成と開始
   xTaskCreatePinnedToCore(
@@ -140,6 +141,13 @@ void setupAWSIoT() {
     0              /* コアID */
   );
 }
+
+
+void callback(char *topic, byte *payload, unsigned int length)
+{
+}
+
+
 
 // AWSへデータを送信するタスク
 void sendDataToAWS(void * parameter){

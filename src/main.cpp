@@ -1,6 +1,7 @@
 #include <M5Core2.h>
 #include <WiFi.h>
 #include <PubSubClient.h>
+#include <WiFiClient.h>
 #include <WiFiClientSecure.h>
 #include "AWSPub.h"
 #include "FS.h"
