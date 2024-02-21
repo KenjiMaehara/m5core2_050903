@@ -10,7 +10,6 @@ const char* aws_endpoint = "YOUR_AWS_IOT_ENDPOINT"; // AWS IoTエンドポイン
 const char* deviceName = "YOUR_DEVICE_NAME";
 const int aws_port = 8883;
 
-String sanitizeEndpoint(String endpoint);
 
 
 // AWS IoT設定（エンドポイント、認証情報など）
@@ -52,6 +51,7 @@ void readAWSDeviceName() {
     }
     configFile.close();
 
+    #if 0
     // 変数に読み込んだ値を設定
     //const char* aws_endpoint = awsEndpoint.c_str();
     //const char* deviceName = awsDeviceName.c_str();
@@ -61,12 +61,17 @@ void readAWSDeviceName() {
     aws_endpoint = temp.c_str();
     std::string temp02 = "\"" + std::string(awsDeviceName.c_str()) + "\"";
     deviceName = temp02.c_str();
+  
 
     //aws_endpoint = awsEndpoint.c_str();
     //deviceName = awsDeviceName.c_str();
     Serial.println("AWS IoTエンドポイント: " + awsEndpoint);
     Serial.println("デバイス名: " + awsDeviceName);
+    #endif
 }
+
+void loadCertificate(const char *path, bool isRootCA);
+void loadPrivateKey(const char *path);
 
 
 void setupAWSIoT() {
@@ -83,53 +88,15 @@ void setupAWSIoT() {
     return;
   }
 
+  // Root CA証明書を読み込む
+  loadCertificate("/key/AmazonRootCA1.pem", true);
 
-  // Amazon Root CA 1証明書を読み込む
-  File ca = SPIFFS.open("/key/AmazonRootCA1.pem", "r");
-  if (!ca) {
-      Serial.println("CA証明書ファイルの読み込みに失敗しました。");
-  } else {
-      Serial.println("CA証明書ファイルを読み込みました。");
-      String caContent = "";
-      while (ca.available()) {
-          caContent += char(ca.read());
-      }
-      Serial.print("CA証明書の内容の長さ: ");
-      Serial.println(caContent.length()); // 読み込んだCA証明書の内容の長さを表示
+  // デバイス証明書を読み込む
+  loadCertificate("/key/94f78c600b499e2.cert.pem", false);
 
-      caContent.trim();
+  // プライベートキーを読み込む
+  loadPrivateKey("/key/94f78c600b499e.private.key");
 
-      net.setCACert(caContent.c_str());
-      ca.close();
-  }
-
-   if(!SPIFFS.begin(true)){
-    Serial.println("SPIFFSの初期化に失敗しました。");
-    return;
-  }
-
-
-  // 拡張子に基づいて証明書とキーを読み込む
-  String certificateContent = SPIFFSRead::readFirstFileWithExtension(".cert.pem");
-  String privateKeyContent = SPIFFSRead::readFirstFileWithExtension(".private.key");
-
-  // 読み込んだ内容でセットアップ
-  if(certificateContent.length() > 0 && privateKeyContent.length() > 0) {
-
-    certificateContent.trim();
-    privateKeyContent.trim();
-
-    net.setCertificate(certificateContent.c_str());
-    net.setPrivateKey(privateKeyContent.c_str());
-
-    // 内容の長さを出力する
-    Serial.print("証明書の長さ: ");
-    Serial.println(certificateContent.length());
-    Serial.print("プライベートキーの長さ: ");
-    Serial.println(privateKeyContent.length());
-  } else {
-    Serial.println("証明書またはプライベートキーが見つかりませんでした。");
-  }
 
   //client.setClient(net);
   // AWS IoTエンドポイントの設定
@@ -166,11 +133,38 @@ void sendDataToAWS(void * parameter){
 }
 
 
-String sanitizeEndpoint(String endpoint) {
-    // ここでエンドポイントの検証と処理を行う
-    // 例: 不要なスペースや特殊文字を除去
-    endpoint.trim(); // 先頭と末尾の空白を除去
-    // 必要に応じて、他の不要な文字を除去する処理を追加
-    return endpoint;
+void loadCertificate(const char *path, bool isRootCA) {
+  File file = SPIFFS.open(path, "r");
+  if (!file) {
+    Serial.println("ファイルのオープンに失敗しました: ");
+    Serial.println(path);
+    return;
+  }
+
+  String cert = file.readString();
+  Serial.print("証明書の長さ: ");
+  Serial.println(cert.length()); // 証明書の長さをデバッグ出力
+  file.close();
+
+  if (isRootCA) {
+    net.setCACert(cert.c_str());
+  } else {
+    net.setCertificate(cert.c_str());
+  }
 }
 
+void loadPrivateKey(const char *path) {
+  File file = SPIFFS.open(path, "r");
+  if (!file) {
+    Serial.println("ファイルのオープンに失敗しました: ");
+    Serial.println(path);
+    return;
+  }
+
+  String key = file.readString();
+  Serial.print("プライベートキーの長さ: ");
+  Serial.println(key.length()); // プライベートキーの長さをデバッグ出力
+  file.close();
+
+  net.setPrivateKey(key.c_str());
+}
