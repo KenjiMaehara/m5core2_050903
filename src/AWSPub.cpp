@@ -55,11 +55,7 @@ void readAWSDeviceName() {
     }
     configFile.close();
 
-    #if 0
-    // 変数に読み込んだ値を設定
-    //const char* aws_endpoint = awsEndpoint.c_str();
-    //const char* deviceName = awsDeviceName.c_str();
-    awsEndpoint = sanitizeEndpoint(awsEndpoint);
+    #if 1
 
     std::string temp = "\"" + std::string(awsEndpoint.c_str()) + "\"";
     aws_endpoint = temp.c_str();
@@ -78,6 +74,8 @@ void readFile(fs::FS &fs, const char * dirname, String path , int num);
 
 void setupAWSIoT() {
 
+  readAWSDeviceName();
+
   //  Serial.println("write ca");
   readFile(SPIFFS, "/", "AmazonRootCA1.cer", 0); //含まれているものを探して、書き込む
   readFile(SPIFFS, "/", "certificate.pem.crt", 1);
@@ -94,7 +92,7 @@ void setupAWSIoT() {
 
   //client.setClient(net);
   // AWS IoTエンドポイントの設定
-  client.setServer("am5y9zzdy09g0-ats.iot.us-east-1.amazonaws.com", 8883);
+  client.setServer(aws_endpoint, 8883);
 
 
   // タスクの作成と開始
@@ -113,7 +111,7 @@ void setupAWSIoT() {
 void sendDataToAWS(void * parameter){
   for(;;){ // 無限ループ
     if (!client.connected()) {
-      while (!client.connect("MELDevice0007")) {
+      while (!client.connect(deviceName)) {
         delay(1000);
       }
     }
