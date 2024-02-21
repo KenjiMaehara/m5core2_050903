@@ -21,9 +21,9 @@ void setup() {
 
   connectToWiFi();
 
-  IPAddress dns(8,8,8,8); // GoogleのDNS
-  WiFi.config(IPAddress(0,0,0,0), IPAddress(0,0,0,0), IPAddress(0,0,0,0), dns);
-  Serial.println("DNS 8.8.8.8 手動指定完了");
+  //IPAddress dns(8,8,8,8); // GoogleのDNS
+  //WiFi.config(IPAddress(0,0,0,0), IPAddress(0,0,0,0), IPAddress(0,0,0,0), dns);
+  //Serial.println("DNS 8.8.8.8 手動指定完了");
 
   delay(1000);
 
