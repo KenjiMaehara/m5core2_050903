@@ -5,6 +5,10 @@
 #include "SPIFFS.h"
 #include "SPIFFSRead.h"
 
+char rootCA[2000];
+char certificate[2000];
+char privateKey[2000];
+
 // AWS IoT設定
 const char* aws_endpoint = "YOUR_AWS_IOT_ENDPOINT"; // AWS IoTエンドポイント
 const char* deviceName = "YOUR_DEVICE_NAME";
@@ -70,33 +74,23 @@ void readAWSDeviceName() {
     #endif
 }
 
-void loadCertificate(const char *path, bool isRootCA);
-void loadPrivateKey(const char *path);
-
+void readFile(fs::FS &fs, const char * dirname, String path , int num);
 
 void setupAWSIoT() {
 
-   if(!SPIFFS.begin(true)){
-    Serial.println("SPIFFSの初期化に失敗しました。");
-    return;
-  }
+  //  Serial.println("write ca");
+  readFile(SPIFFS, "/", "AmazonRootCA1.cer", 0); //含まれているものを探して、書き込む
+  readFile(SPIFFS, "/", "certificate.pem.crt", 1);
+  readFile(SPIFFS, "/", "private.pem.key", 2);
 
-  readAWSDeviceName();
+  const char* root = rootCA;
+  const char* cer = certificate;
+  const char* priv = privateKey;
 
-   if(!SPIFFS.begin(true)){
-    Serial.println("SPIFFSの初期化に失敗しました。");
-    return;
-  }
-
-  // Root CA証明書を読み込む
-  loadCertificate("/key/AmazonRootCA1.pem", true);
-
-  // デバイス証明書を読み込む
-  loadCertificate("/key/94f78c600b499e2.cert.pem", false);
-
-  // プライベートキーを読み込む
-  loadPrivateKey("/key/94f78c600b499e.private.key");
-
+  // Configure WiFiClientSecure to use the AWS IoT device credentials
+  net.setCACert(root);
+  net.setCertificate(cer);
+  net.setPrivateKey(priv);
 
   //client.setClient(net);
   // AWS IoTエンドポイントの設定
@@ -133,38 +127,55 @@ void sendDataToAWS(void * parameter){
 }
 
 
-void loadCertificate(const char *path, bool isRootCA) {
-  File file = SPIFFS.open(path, "r");
-  if (!file) {
-    Serial.println("ファイルのオープンに失敗しました: ");
-    Serial.println(path);
+
+void readFile(fs::FS &fs, const char * dirname, String path , int num) {
+
+  String targetString;
+  char* result = "no data";
+  File root = fs.open(dirname);//どのディレクションを開くか
+  File file = root.openNextFile();
+  while (file) {//ここでファイル名を検索、違っていれば次のを拾いにいく。
+    String res = file.name();
+    if (res.indexOf(path) != -1) {
+      targetString = res;
+      break;
+    }
+    file = root.openNextFile();
+  }
+
+  //エラーハンドリング
+  if (targetString == "") {
+    Serial.print("path error ");
+    return;
+  }
+//  Serial.print("Reading file : ");
+//  Serial.println(targetString);
+  //ファイル名を生成する
+  targetString = "/" + targetString;
+
+  File targetFiles = fs.open(targetString);
+  if (!file || file.isDirectory()) {
+    Serial.println("- failed to open file for reading");
     return;
   }
 
-  String cert = file.readString();
-  Serial.print("証明書の長さ: ");
-  Serial.println(cert.length()); // 証明書の長さをデバッグ出力
-  file.close();
-
-  if (isRootCA) {
-    net.setCACert(cert.c_str());
-  } else {
-    net.setCertificate(cert.c_str());
-  }
-}
-
-void loadPrivateKey(const char *path) {
-  File file = SPIFFS.open(path, "r");
-  if (!file) {
-    Serial.println("ファイルのオープンに失敗しました: ");
-    Serial.println(path);
-    return;
+  int i = 0;
+  while (file.available()) {
+    //    Serial.write(file.read());
+    switch (num) {
+      case 0:
+        rootCA[i] = file.read();
+        break;
+      case 1:
+        certificate[i] = file.read();
+        break;
+      case 2:
+        privateKey[i] = file.read();
+        break;
+    }
+    i++;
   }
 
-  String key = file.readString();
-  Serial.print("プライベートキーの長さ: ");
-  Serial.println(key.length()); // プライベートキーの長さをデバッグ出力
   file.close();
-
-  net.setPrivateKey(key.c_str());
+  return;
 }
