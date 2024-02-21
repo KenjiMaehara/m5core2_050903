@@ -5,7 +5,7 @@
 
 
 
-
+#if 0
 String SPIFFSRead::readFirstFileWithExtension(const String &extension) {
     if (!SPIFFS.begin(true)) {
         Serial.println("SPIFFSのマウントに失敗しました。");
@@ -29,6 +29,7 @@ String SPIFFSRead::readFirstFileWithExtension(const String &extension) {
     }
     return ""; // ファイルが見つからなかった場合
 }
+#endif
 
 
 

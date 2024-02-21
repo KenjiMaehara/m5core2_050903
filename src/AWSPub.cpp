@@ -125,7 +125,7 @@ void setupAWSIoT() {
     Serial.println("証明書またはプライベートキーが見つかりませんでした。");
   }
 
-  client.setClient(net);
+  //client.setClient(net);
   // AWS IoTエンドポイントの設定
   client.setServer(aws_endpoint, aws_port);
 
@@ -167,3 +167,4 @@ String sanitizeEndpoint(String endpoint) {
     // 必要に応じて、他の不要な文字を除去する処理を追加
     return endpoint;
 }
+
