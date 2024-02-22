@@ -92,7 +92,7 @@ void setupAWSIoT() {
 
   //client.setClient(net);
   // AWS IoTエンドポイントの設定
-  client.setServer(aws_endpoint, 8883);
+  client.setServer("am5y9zzdy09g0-ats.iot.us-east-1.amazonaws.com", 8883);
 
 
   // タスクの作成と開始
@@ -111,7 +111,7 @@ void setupAWSIoT() {
 void sendDataToAWS(void * parameter){
   for(;;){ // 無限ループ
     if (!client.connected()) {
-      while (!client.connect(deviceName)) {
+      while (!client.connect("MELDevice0007")) {
         delay(1000);
       }
     }
