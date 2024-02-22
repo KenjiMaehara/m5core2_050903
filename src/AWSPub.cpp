@@ -66,6 +66,11 @@ void readAWSDeviceName() {
 }
 
 
+String caContent = "";
+String certificateContent = "";
+String privateKeyContent = "";
+
+
 void setupAWSIoT() {
 
    if(!SPIFFS.begin(true)){
@@ -87,7 +92,7 @@ void setupAWSIoT() {
       Serial.println("CA証明書ファイルの読み込みに失敗しました。");
   } else {
       Serial.println("CA証明書ファイルを読み込みました。");
-      String caContent = "";
+      //String caContent = "";
       while (ca.available()) {
           caContent += char(ca.read());
       }
@@ -105,8 +110,8 @@ void setupAWSIoT() {
 
 
   // 拡張子に基づいて証明書とキーを読み込む
-  String certificateContent = SPIFFSRead::readFirstFileWithExtension(".cert.pem");
-  String privateKeyContent = SPIFFSRead::readFirstFileWithExtension(".private.key");
+  certificateContent = SPIFFSRead::readFirstFileWithExtension(".cert.pem");
+  privateKeyContent = SPIFFSRead::readFirstFileWithExtension(".private.key");
 
   // 読み込んだ内容でセットアップ
   if(certificateContent.length() > 0 && privateKeyContent.length() > 0) {
@@ -124,7 +129,7 @@ void setupAWSIoT() {
 
   //client.setClient(net);
   // AWS IoTエンドポイントの設定
-  client.setServer(gAwsEndpoint, aws_port);
+  client.setServer(gAwsEndpoint.c_str(), aws_port);
 
 
   // タスクの作成と開始
@@ -143,7 +148,7 @@ void setupAWSIoT() {
 void sendDataToAWS(void * parameter){
   for(;;){ // 無限ループ
     if (!client.connected()) {
-      while (!client.connect(gDeviceName)) {
+      while (!client.connect(gDeviceName.c_str())) {
         delay(1000);
       }
     }
