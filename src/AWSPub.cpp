@@ -6,8 +6,8 @@
 #include "SPIFFSRead.h"
 
 // AWS IoT設定
-const char* aws_endpoint = "YOUR_AWS_IOT_ENDPOINT"; // AWS IoTエンドポイント
-const char* deviceName = "YOUR_DEVICE_NAME";
+//const char* aws_endpoint = "YOUR_AWS_IOT_ENDPOINT"; // AWS IoTエンドポイント
+//const char* deviceName = "YOUR_DEVICE_NAME";
 String gAwsEndpoint = "";
 String gDeviceName = "";
 const int aws_port = 8883;
