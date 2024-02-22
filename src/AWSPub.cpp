@@ -10,8 +10,11 @@ char certificate[2000];
 char privateKey[2000];
 
 // AWS IoT設定
-const char* aws_endpoint = "YOUR_AWS_IOT_ENDPOINT"; // AWS IoTエンドポイント
-const char* deviceName = "YOUR_DEVICE_NAME";
+//const char* aws_endpoint = "YOUR_AWS_IOT_ENDPOINT"; // AWS IoTエンドポイント
+//const char* deviceName = "YOUR_DEVICE_NAME";
+// グローバル変数としてStringオブジェクトを宣言
+String gAwsEndpoint = "";
+String gDeviceName = "";
 const int aws_port = 8883;
 
 
@@ -47,9 +50,9 @@ void readAWSDeviceName() {
             String value = line.substring(separatorIndex + 1);
 
             if (key == "AWS_DEVICE_NAME") {
-                awsDeviceName = value;
+                gDeviceName = value;
             } else if (key == "AWS_IOT_ENDPOINT") {
-                awsEndpoint = value;
+                gAwsEndpoint = value;
             }
         }
     }
@@ -57,16 +60,10 @@ void readAWSDeviceName() {
 
     #if 1
 
-    std::string temp = "\"" + std::string(awsEndpoint.c_str()) + "\"";
-    aws_endpoint = temp.c_str();
-    std::string temp02 = "\"" + std::string(awsDeviceName.c_str()) + "\"";
-    deviceName = temp02.c_str();
-  
-
     //aws_endpoint = awsEndpoint.c_str();
     //deviceName = awsDeviceName.c_str();
-    Serial.println("AWS IoTエンドポイント: " + String(aws_endpoint));
-    Serial.println("デバイス名: " + String(deviceName));
+    Serial.println("AWS IoTエンドポイント: " + gAwsEndpoint);
+    Serial.println("デバイス名: " + gDeviceName);
     #endif
 }
 
@@ -92,7 +89,7 @@ void setupAWSIoT() {
 
   //client.setClient(net);
   // AWS IoTエンドポイントの設定
-  client.setServer("am5y9zzdy09g0-ats.iot.us-east-1.amazonaws.com", 8883);
+  client.setServer(gAwsEndpoint.c_str(), 8883);
 
 
   // タスクの作成と開始
@@ -111,7 +108,7 @@ void setupAWSIoT() {
 void sendDataToAWS(void * parameter){
   for(;;){ // 無限ループ
     if (!client.connected()) {
-      while (!client.connect("MELDevice0007")) {
+      while (!client.connect(gDeviceName.c_str())) {
         delay(1000);
       }
     }
