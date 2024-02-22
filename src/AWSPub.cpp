@@ -4,6 +4,7 @@
 #include "FS.h"
 #include "SPIFFS.h"
 #include "SPIFFSRead.h"
+#include "payload.h"
 
 // AWS IoT設定
 //const char* aws_endpoint = "YOUR_AWS_IOT_ENDPOINT"; // AWS IoTエンドポイント
@@ -153,10 +154,24 @@ void sendDataToAWS(void * parameter){
       }
     }
 
+    // 現在の時刻をミリ秒で取得
+    unsigned long currentTime = millis();
+
+    #if 1
+    // ペイロードを動的に生成
+    String payload = createJsonPayload(gDeviceName, "デバイスID", "所属組織", currentTime, "センサー情報", "ボタン状態", "定時監視データ", "予備データ1", "予備データ2");
+
+    // 生成されたペイロードをAWS IoTに送信
+    client.publish("topic/path", payload.c_str());
+    Serial.println("AWS IoTにデータを送信しました。");
+    #endif
+
+    #if 0
     // データをAWS IoTに送信
     String payload = "{\"temperature\": 25.5}";
     client.publish("topic/path", payload.c_str());
     Serial.println("AWS IoTにデータを送信しました。");
+    #endif
 
     delay(60000); // 1分ごとに送信
   }
