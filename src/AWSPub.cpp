@@ -66,9 +66,9 @@ void readAWSDeviceName() {
 }
 
 
-String caContent = "";
-String certificateContent = "";
-String privateKeyContent = "";
+String gCaContent = "";
+String gCertificateContent = "";
+String gPrivateKeyContent = "";
 
 
 void setupAWSIoT() {
@@ -94,12 +94,12 @@ void setupAWSIoT() {
       Serial.println("CA証明書ファイルを読み込みました。");
       //String caContent = "";
       while (ca.available()) {
-          caContent += char(ca.read());
+          gCaContent += char(ca.read());
       }
       Serial.print("CA証明書の内容の長さ: ");
-      Serial.println(caContent.length()); // 読み込んだCA証明書の内容の長さを表示
+      Serial.println(gCaContent.length()); // 読み込んだCA証明書の内容の長さを表示
 
-      net.setCACert(caContent.c_str());
+      net.setCACert(gCaContent.c_str());
       ca.close();
   }
 
@@ -110,19 +110,19 @@ void setupAWSIoT() {
 
 
   // 拡張子に基づいて証明書とキーを読み込む
-  certificateContent = SPIFFSRead::readFirstFileWithExtension(".cert.pem");
-  privateKeyContent = SPIFFSRead::readFirstFileWithExtension(".private.key");
+  gCertificateContent = SPIFFSRead::readFirstFileWithExtension(".cert.pem");
+  gPrivateKeyContent = SPIFFSRead::readFirstFileWithExtension(".private.key");
 
   // 読み込んだ内容でセットアップ
-  if(certificateContent.length() > 0 && privateKeyContent.length() > 0) {
-    net.setCertificate(certificateContent.c_str());
-    net.setPrivateKey(privateKeyContent.c_str());
+  if(gCertificateContent.length() > 0 && gPrivateKeyContent.length() > 0) {
+    net.setCertificate(gCertificateContent.c_str());
+    net.setPrivateKey(gPrivateKeyContent.c_str());
 
     // 内容の長さを出力する
     Serial.print("証明書の長さ: ");
-    Serial.println(certificateContent.length());
+    Serial.println(gCertificateContent.length());
     Serial.print("プライベートキーの長さ: ");
-    Serial.println(privateKeyContent.length());
+    Serial.println(gPrivateKeyContent.length());
   } else {
     Serial.println("証明書またはプライベートキーが見つかりませんでした。");
   }
