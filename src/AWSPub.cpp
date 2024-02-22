@@ -65,8 +65,8 @@ void readAWSDeviceName() {
 
     //aws_endpoint = awsEndpoint.c_str();
     //deviceName = awsDeviceName.c_str();
-    Serial.println("AWS IoTエンドポイント: " + awsEndpoint);
-    Serial.println("デバイス名: " + awsDeviceName);
+    Serial.println("AWS IoTエンドポイント: " + String(aws_endpoint));
+    Serial.println("デバイス名: " + String(deviceName));
     #endif
 }
 
@@ -77,9 +77,9 @@ void setupAWSIoT() {
   readAWSDeviceName();
 
   //  Serial.println("write ca");
-  readFile(SPIFFS, "/", "AmazonRootCA1.cer", 0); //含まれているものを探して、書き込む
-  readFile(SPIFFS, "/", "certificate.pem.crt", 1);
-  readFile(SPIFFS, "/", "private.pem.key", 2);
+  readFile(SPIFFS, "/key", "AmazonRootCA1.cer", 0); //含まれているものを探して、書き込む
+  readFile(SPIFFS, "/key", "certificate.pem.crt", 1);
+  readFile(SPIFFS, "/key", "private.pem.key", 2);
 
   const char* root = rootCA;
   const char* cer = certificate;
