@@ -10,11 +10,13 @@ String createJsonPayload(const String& deviceName, const String& deviceId, const
   jsonDoc["deviceId"] = deviceId;
   jsonDoc["organization"] = organization;
   jsonDoc["timestamp"] = timestamp;
+  #if 0
   jsonDoc["sensor"] = sensor;
   jsonDoc["button"] = button;
   jsonDoc["routineCheck"] = routineCheck;
   jsonDoc["spare1"] = spare1;
   jsonDoc["spare2"] = spare2;
+  #endif
 
   String payload;
   serializeJson(jsonDoc, payload); // JSONオブジェクトを文字列に変換
