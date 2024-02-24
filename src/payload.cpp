@@ -23,7 +23,7 @@ String createJsonPayload(
   jsonDoc["sensor"] = sensor;
   jsonDoc["button"] = button;
   jsonDoc["routineCheck"] = routineCheck;
-  #if 1
+  #if 0
   jsonDoc["spare1"] = spare1;
   jsonDoc["spare2"] = spare2;
   #endif

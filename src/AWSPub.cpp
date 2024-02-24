@@ -174,8 +174,12 @@ void sendDataToAWS(void * parameter){
     Serial.print("Payload size: ");
     Serial.println(payload.length()); // ペイロードのサイズを出力
     // 生成されたペイロードをAWS IoTに送信
-    client.publish("topic/path", payload.c_str());
-    Serial.println("AWS IoTにデータを送信しました。");
+    if(client.publish("topic/path", payload.c_str())){
+      Serial.println("AWS IoTにデータを送信しました。");
+    } else {
+      Serial.println("AWS IoTへのデータ送信に失敗しました。");
+    }
+    
     #endif
 
     #if 0
