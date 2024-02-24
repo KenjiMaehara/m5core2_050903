@@ -159,7 +159,17 @@ void sendDataToAWS(void * parameter){
 
     #if 1
     // ペイロードを動的に生成
-    String payload = createJsonPayload(gDeviceName, "デバイスID", "所属組織", currentTime, "センサー情報", "ボタン状態", "定時監視データ", "予備データ1", "予備データ2");
+    String payload = createJsonPayload(
+      gDeviceName, 
+      "デバイスID", 
+      "所属組織", 
+      currentTime, 
+      "センサー情報", 
+      "ボタン状態", 
+      "定時監視データ", 
+      "予備データ1", 
+      "予備データ2"
+      );
 
     Serial.print("Payload size: ");
     Serial.println(payload.length()); // ペイロードのサイズを出力

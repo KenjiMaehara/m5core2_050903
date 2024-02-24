@@ -2,7 +2,17 @@
 #include "payload.h" // ヘッダーファイルをインクルード
 
 // JSONペイロードを作成する関数
-String createJsonPayload(const String& deviceName, const String& deviceId, const String& organization, unsigned long timestamp, const String& sensor, const String& button, const String& routineCheck, const String& spare1, const String& spare2) {
+String createJsonPayload(
+  const String& deviceName, 
+  const String& deviceId, 
+  const String& organization, 
+  unsigned long timestamp, 
+  const String& sensor, 
+  const String& button, 
+  const String& routineCheck, 
+  const String& spare1, 
+  const String& spare2
+  ) {
   StaticJsonDocument<512> jsonDoc; // JSONドキュメントを作成
   
   // データをJSONドキュメントに追加
