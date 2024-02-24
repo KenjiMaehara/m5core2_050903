@@ -132,6 +132,8 @@ void setupAWSIoT() {
   // AWS IoTエンドポイントの設定
   client.setServer(gAwsEndpoint.c_str(), aws_port);
 
+  //client.setKeepAlive(60);
+
 
   // タスクの作成と開始
   xTaskCreatePinnedToCore(
@@ -147,6 +149,7 @@ void setupAWSIoT() {
 
 // AWSへデータを送信するタスク
 void sendDataToAWS(void * parameter){
+
   for(;;){ // 無限ループ
     if (!client.connected()) {
       while (!client.connect(gDeviceName.c_str())) {
@@ -189,7 +192,8 @@ void sendDataToAWS(void * parameter){
     Serial.println("AWS IoTにデータを送信しました。");
     #endif
 
-    delay(60000); // 1分ごとに送信
+    //delay(60000); // 1分ごとに送信
+    delay(30000); // 30secごとに送信
   }
 }
 
