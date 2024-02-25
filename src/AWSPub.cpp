@@ -6,6 +6,9 @@
 #include "SPIFFSRead.h"
 #include <M5Core2.h>
 
+#define BUZZER_PIN 25 // スピーカーが接続されているGPIOピン番号
+#define CHANNEL 0
+
 // AWS IoT設定
 //const char* aws_endpoint = "YOUR_AWS_IOT_ENDPOINT"; // AWS IoTエンドポイント
 //const char* deviceName = "YOUR_DEVICE_NAME";
@@ -78,6 +81,9 @@ String gPrivateKeyContent = "";
 
 
 void setupAWSIoT() {
+
+  ledcSetup(CHANNEL, 2000, 8); // チャンネル0、2kHzの周波数、8ビットの解像度で設定
+  ledcAttachPin(BUZZER_PIN, CHANNEL); // BUZZER_PINをチャンネル0にアタッチ
 
    if(!SPIFFS.begin(true)){
     Serial.println("SPIFFSの初期化に失敗しました。");
@@ -209,6 +215,12 @@ void callback(char* topic, byte* message, unsigned int length) {
   }
   Serial.println(messageTemp);
   
+  // ビープ音を鳴らす
+  ledcWrite(CHANNEL, 125); // デューティサイクルを50%に設定
+  delay(500); // 500ミリ秒待つ
+  ledcWrite(CHANNEL, 0); // 音を止める
+  delay(500); // 500ミリ秒待つ
+
   // ここで受信したメッセージに基づいて何かアクションを行う
   // 受信したメッセージに基づいてM5Core2の画面をランダムに色を変えて5秒間点滅させる
   for (int i = 0; i < 5; i++) { // 5回繰り返し
