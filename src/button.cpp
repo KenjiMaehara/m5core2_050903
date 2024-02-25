@@ -1,7 +1,6 @@
 #include <M5Core2.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "payload.h"
 #include "AWSPub.h"
 
 
@@ -22,40 +21,23 @@ const unsigned long debounceTime = 1000; // 1秒間のデバウンス時間
 // タスクで実行する関数を宣言
 void buttonTask(void *parameter) {
   for (;;) { // 無限ループ
+    if (!client.connected()) {
+      //while (!client.connect(gDeviceName.c_str())) {
+        delay(1000);
+      //}
+    }
     M5.update();
     if (M5.BtnB.wasPressed()) {
-      //if (currentTime - lastPressTime > debounceTime) 
-      {
-        //lastPressTime = currentTime;
-        String jsonPayload = createJsonPayload(gDeviceName, "deviceId", "organization", millis(), "sensorValue", "1", "routineCheck", "spare1", "spare2");
-        // ここでAWSにjsonPayloadをパブリッシュするコードを実装
-        sendSignalDataToAWS(jsonPayload);
 
-        Serial.println("Button B was pressed");
+      String topic = String("button/topic/") + gDeviceName; // トピック名を構築
+      if(client.publish(topic.c_str(), (gDeviceName + " Button A was pressed").c_str())){
+        Serial.println("Button A press event published to AWS IoT.");
+      } else {
+        Serial.println("Failed to publish Button A press event.");
       }
-    }
-    vTaskDelay(100 / portTICK_PERIOD_MS); // 100ミリ秒の遅延
-  }
-}
 
-
-bool sendSignalDataToAWS(const String& jsonPayload) {
-  if (!client.connected()) {
-    #if 1
-    while (!client.connect(gDeviceName.c_str())) {
-        delay(1000);
-    }
-    #endif
-
-    Serial.print("Payload size: ");
-    Serial.println(jsonPayload.length()); // ペイロードのサイズを出力
-    // 生成されたペイロードをAWS IoTに送信
-    if(client.publish("topic/path", jsonPayload.c_str())){
-      Serial.println("AWS IoTにSignalデータを送信しました。");
-      return true;
-    } else {
-      Serial.println("AWS IoTへのSignalデータ送信に失敗しました。");
-      return false;
+      vTaskDelay(100 / portTICK_PERIOD_MS); // 100ミリ秒の遅延
     }
   }
 }
+

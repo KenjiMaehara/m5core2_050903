@@ -4,7 +4,6 @@
 #include "FS.h"
 #include "SPIFFS.h"
 #include "SPIFFSRead.h"
-#include "payload.h"
 
 // AWS IoT設定
 //const char* aws_endpoint = "YOUR_AWS_IOT_ENDPOINT"; // AWS IoTエンドポイント
@@ -21,6 +20,11 @@ String sanitizeEndpoint(String endpoint);
 
 WiFiClientSecure net;
 PubSubClient client(net);
+
+
+void callback(char* topic, byte* message, unsigned int length);
+void subscDataToAWS(void * parameter);
+void reconnect();
 
 
 void readAWSDeviceName() {
@@ -135,10 +139,17 @@ void setupAWSIoT() {
   //client.setKeepAlive(60);
 
 
+  // コールバック関数をセット
+  client.setCallback(callback);
+  
+  // サブスクライブするトピックを指定
+  client.subscribe("button/topic/+");
+
+
   // タスクの作成と開始
   xTaskCreatePinnedToCore(
-    sendDataToAWS, /* タスク関数 */
-    "SendAWSTask", /* タスク名 */
+    subscDataToAWS, /* タスク関数 */
+    "subscDataToAWSTask", /* タスク名 */
     10000,         /* スタックサイズ */
     NULL,          /* タスクパラメータ */
     1,             /* 優先度 */
@@ -148,57 +159,50 @@ void setupAWSIoT() {
 }
 
 // AWSへデータを送信するタスク
-void sendDataToAWS(void * parameter){
+void subscDataToAWS(void * parameter){
 
   for(;;){ // 無限ループ
     if (!client.connected()) {
-      while (!client.connect(gDeviceName.c_str())) {
-        delay(1000);
-      }
+      reconnect();
     }
 
-    // 現在の時刻をミリ秒で取得
-    unsigned long currentTime = millis();
 
-    #if 1
-    // ペイロードを動的に生成
-    String payload = createJsonPayload(
-      gDeviceName, 
-      "デバイスID", 
-      "所属組織", 
-      currentTime, 
-      "センサー情報", 
-      "ボタン状態", 
-      "定時監視データ", 
-      "予備データ1", 
-      "予備データ2"
-      );
-
-    Serial.print("Payload size: ");
-    Serial.println(payload.length()); // ペイロードのサイズを出力
-    // 生成されたペイロードをAWS IoTに送信
-    if(client.publish("topic/path", payload.c_str())){
-      Serial.println("AWS IoTにデータを送信しました。");
-    } else {
-      Serial.println("AWS IoTへのデータ送信に失敗しました。");
-    }
-    
-    #endif
-
-    #if 0
-    // データをAWS IoTに送信
-    String payload = "{\"temperature\": 25.5}";
-    client.publish("topic/path", payload.c_str());
-    Serial.println("AWS IoTにデータを送信しました。");
-    #endif
-
-    delay(600000); // 10分ごとに送信
-    //delay(60000); // 1分ごとに送信
-    //delay(30000); // 30secごとに送信
   }
 }
 
 
+// サーバーへの接続が切れた場合の再接続ロジックに、サブスクライブ処理を追加
+void reconnect() {
+  // ループして接続を試みる
+  while (!client.connected()) {
+    Serial.print("Attempting MQTT connection...");
+    // クライアントIDとしてデバイス名を使用して接続試行
+    if (client.connect(gDeviceName.c_str())) {
+      Serial.println("connected");
+      // ここでトピックを再サブスクライブ
+      client.subscribe("button/topic/+");
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      // 5秒待機して再試行
+      delay(5000);
+    }
+  }
+}
 
 
-
+// MQTTメッセージを受信したときのコールバック関数
+void callback(char* topic, byte* message, unsigned int length) {
+  Serial.print("Message arrived on topic: ");
+  Serial.print(topic);
+  Serial.print(". Message: ");
+  String messageTemp;
+  
+  for (int i = 0; i < length; i++) {
+    messageTemp += (char)message[i];
+  }
+  Serial.println(messageTemp);
+  
+  // ここで受信したメッセージに基づいて何かアクションを行う
+}
