@@ -192,8 +192,13 @@ void sendDataToAWS(void * parameter){
     Serial.println("AWS IoTにデータを送信しました。");
     #endif
 
+    delay(600000); // 10分ごとに送信
     //delay(60000); // 1分ごとに送信
-    delay(30000); // 30secごとに送信
+    //delay(30000); // 30secごとに送信
   }
 }
+
+
+
+
 
