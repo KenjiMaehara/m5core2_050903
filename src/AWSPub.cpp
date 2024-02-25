@@ -4,6 +4,7 @@
 #include "FS.h"
 #include "SPIFFS.h"
 #include "SPIFFSRead.h"
+#include <M5Core2.h>
 
 // AWS IoT設定
 //const char* aws_endpoint = "YOUR_AWS_IOT_ENDPOINT"; // AWS IoTエンドポイント
@@ -141,7 +142,6 @@ void setupAWSIoT() {
 
   // コールバック関数をセット
   client.setCallback(callback);
-  
   // サブスクライブするトピックを指定
   client.subscribe("button/topic/+");
 
@@ -166,7 +166,7 @@ void subscDataToAWS(void * parameter){
       reconnect();
     }
 
-
+    vTaskDelay(100 / portTICK_PERIOD_MS); // 100ミリ秒の遅延
   }
 }
 
@@ -179,6 +179,9 @@ void reconnect() {
     // クライアントIDとしてデバイス名を使用して接続試行
     if (client.connect(gDeviceName.c_str())) {
       Serial.println("connected");
+
+      // コールバック関数をセット
+      client.setCallback(callback);
       // ここでトピックを再サブスクライブ
       client.subscribe("button/topic/+");
     } else {
@@ -205,4 +208,11 @@ void callback(char* topic, byte* message, unsigned int length) {
   Serial.println(messageTemp);
   
   // ここで受信したメッセージに基づいて何かアクションを行う
+  // 受信したメッセージに基づいてM5Core2の画面をランダムに色を変えて5秒間点滅させる
+  for (int i = 0; i < 5; i++) { // 5回繰り返し
+      uint32_t randomColor = random(0xFFFFFF); // ランダムな色を生成
+      M5.Lcd.fillScreen(randomColor); // 画面をランダムな色で塗りつぶす
+      delay(1000); // 1秒待つ
+  }
+  M5.Lcd.fillScreen(BLACK); // 最後に画面を黒でクリア
 }
