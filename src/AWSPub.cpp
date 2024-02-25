@@ -143,14 +143,14 @@ void setupAWSIoT() {
   // コールバック関数をセット
   client.setCallback(callback);
   // サブスクライブするトピックを指定
-  client.subscribe("button/topic/+");
+  client.subscribe("button/topic");
 
 
   // タスクの作成と開始
   xTaskCreatePinnedToCore(
     subscDataToAWS, /* タスク関数 */
     "subscDataToAWSTask", /* タスク名 */
-    20000,         /* スタックサイズ */
+    10000,         /* スタックサイズ */
     NULL,          /* タスクパラメータ */
     1,             /* 優先度 */
     NULL,          /* タスクハンドル */
@@ -165,6 +165,8 @@ void subscDataToAWS(void * parameter){
     if (!client.connected()) {
       reconnect();
     }
+
+    client.loop();
 
     vTaskDelay(100 / portTICK_PERIOD_MS); // 100ミリ秒の遅延
   }
@@ -183,7 +185,7 @@ void reconnect() {
       // コールバック関数をセット
       //client.setCallback(callback);
       // ここでトピックを再サブスクライブ
-      client.subscribe("button/topic/+");
+      client.subscribe("button/topic");
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());

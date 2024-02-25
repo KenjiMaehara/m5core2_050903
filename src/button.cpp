@@ -10,7 +10,7 @@ bool sendSignalDataToAWS(const String& jsonPayload);
 void buttonsetup() {
   M5.begin();
   // タスクを作成し、実行を開始
-  xTaskCreate(buttonTask, "Button Task", 10000, NULL, 1, NULL);
+  //xTaskCreate(buttonTask, "Button Task", 10000, NULL, 1, NULL);
 }
 
 
