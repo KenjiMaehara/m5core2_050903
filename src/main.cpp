@@ -1,55 +1,44 @@
 #include <M5Core2.h>
-#include <AudioFileSourceSD.h>
-#include <AudioGeneratorMP3.h>
-#include <AudioOutputI2S.h>
+#include <driver/i2s.h>
+#include <WiFi.h>
+#include "AudioFileSourceSD.h"
+#include "AudioGeneratorWAV.h"
+#include "AudioOutputI2S.h"
 
-// WiFi設定
-const char* ssid = "YOUR_WIFI_SSID";
-const char* password = "YOUR_WIFI_PASSWORD";
 
-AudioGeneratorMP3 *mp3;
+AudioGeneratorWAV *wav;
 AudioFileSourceSD *file;
 AudioOutputI2S *out;
 
-void audio_setup();
+#define OUTPUT_GAIN 50
 
-#define OUTPUT_GAIN 10
-
-void setup() {
-
-  audio_setup();
-
-}
-
-
-
-void audio_setup() {
+void setup()
+{
   M5.begin();
-
   M5.Axp.SetSpkEnable(true);
 
-  out = new AudioOutputI2S(0, 1); // I2Sデータピンとクロックピンを指定
+  WiFi.mode(WIFI_OFF); 
+  delay(500);
+  
+  M5.Lcd.setTextFont(2);
+  M5.Lcd.printf("Sample WAV playback begins...\n");
+  Serial.printf("Sample WAV playback begins...\n");
+
+  file = new AudioFileSourceSD("/test.wav");
+  out = new AudioOutputI2S(0, 0); // Output to ExternalDAC
   out->SetPinout(12, 0, 2);
-  //out->SetGain(0.3); // 音量を設定
   out->SetOutputModeMono(true);
   out->SetGain((float)OUTPUT_GAIN/100.0);
-  file = new AudioFileSourceSD("/test.mp3"); // SDカードのルートにあるMP3ファイル
-  mp3 = new AudioGeneratorMP3();
-
+  wav = new AudioGeneratorWAV();
+  wav->begin(file, out);
 }
 
-
-
-void loop() {
-  // ここでは何もしない
-
-  if (mp3->begin(file, out)) {
-    while (mp3->isRunning()) {
-      mp3->loop();
-    }
-    mp3->stop();
+void loop()
+{
+  if (wav->isRunning()) {
+    if (!wav->loop()) wav->stop();
+  } else {
+    Serial.printf("WAV done\n");
+    delay(1000);
   }
-  //vTaskDelete(NULL); // Delete the task when done
-  //delay(100);
 }
-
