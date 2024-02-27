@@ -11,7 +11,7 @@ AudioGeneratorWAV *wav;
 AudioFileSourceSD *file;
 AudioOutputI2S *out;
 
-#define OUTPUT_GAIN 200
+#define OUTPUT_GAIN 300
 
 void audio_task(void *pvParameters);
 
@@ -52,7 +52,7 @@ void audio_task(void *pvParameters) {
       out->SetOutputModeMono(true);
       out->SetGain((float)OUTPUT_GAIN/100.0);
       wav = new AudioGeneratorWAV();
-      
+
       M5.Lcd.printf("Playing WAV\n");
       Serial.printf("Playing WAV\n");
       if (!wav->isRunning()) {
