@@ -36,7 +36,7 @@ void audio_setup()
   //wav->begin(file, out);
 
   // audio_taskタスクを作成
-  xTaskCreate(audio_task, "AudioTask", 10000, NULL, 1, NULL);
+  xTaskCreatePinnedToCore(audio_task, "AudioTask", 10000, NULL, 1, NULL, 1);
 }
 
 
@@ -45,6 +45,14 @@ void audio_task(void *pvParameters) {
   for(;;) { // 無限ループでタスクを実行
     // Check if Button A is pressed
     if (M5.BtnA.wasPressed()) {
+      delay(100);
+      file = new AudioFileSourceSD("/test.wav");
+      out = new AudioOutputI2S(0, 0); // Output to ExternalDAC
+      out->SetPinout(12, 0, 2);
+      out->SetOutputModeMono(true);
+      out->SetGain((float)OUTPUT_GAIN/100.0);
+      wav = new AudioGeneratorWAV();
+      
       M5.Lcd.printf("Playing WAV\n");
       Serial.printf("Playing WAV\n");
       if (!wav->isRunning()) {
@@ -56,6 +64,7 @@ void audio_task(void *pvParameters) {
     if (wav->isRunning()) {
       if (!wav->loop()) {
         wav->stop();
+        file->seek(0, SEEK_SET); // ファイルを先頭に戻す
         M5.Lcd.printf("WAV Playback finished\n");
         Serial.printf("WAV Playback finished\n");
       }
