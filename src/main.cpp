@@ -10,7 +10,7 @@ AudioGeneratorWAV *wav;
 AudioFileSourceSD *file;
 AudioOutputI2S *out;
 
-#define OUTPUT_GAIN 50
+#define OUTPUT_GAIN 200
 
 void setup()
 {
