@@ -1,6 +1,5 @@
 #include <M5Core2.h>
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
+
 #include <AudioFileSourceSD.h>
 #include <AudioGeneratorMP3.h>
 #include <AudioOutputI2S.h>
