@@ -26,20 +26,5 @@ void audio_setup() {
   file = new AudioFileSourceSD("/test.mp3"); // SDカードのルートにあるMP3ファイル
   mp3 = new AudioGeneratorMP3();
 
-  // Create a task that will execute the PlayMP3Task() function, with a name of "PlayMP3"
-  xTaskCreatePinnedToCore(PlayMP3Task, "PlayMP3", 10000, NULL, 1, NULL, 0);
 }
 
-
-void PlayMP3Task(void *parameter) {
-
-
-
-  if (mp3->begin(file, out)) {
-    while (mp3->isRunning()) {
-      mp3->loop();
-    }
-    mp3->stop();
-  }
-  vTaskDelete(NULL); // Delete the task when done
-}
