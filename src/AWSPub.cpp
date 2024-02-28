@@ -5,6 +5,7 @@
 #include "SPIFFS.h"
 #include "SPIFFSRead.h"
 #include <M5Core2.h>
+#include "audio.h"
 
 #define BUZZER_PIN 25 // スピーカーが接続されているGPIOピン番号
 #define CHANNEL 0
@@ -203,6 +204,8 @@ void reconnect() {
 }
 
 
+
+
 // MQTTメッセージを受信したときのコールバック関数
 void callback(char* topic, byte* message, unsigned int length) {
   Serial.print("Message arrived on topic: ");
@@ -220,6 +223,8 @@ void callback(char* topic, byte* message, unsigned int length) {
   delay(500); // 500ミリ秒待つ
   ledcWrite(CHANNEL, 0); // 音を止める
   delay(500); // 500ミリ秒待つ
+
+  gSoundPlay = true;
 
   // ここで受信したメッセージに基づいて何かアクションを行う
   // 受信したメッセージに基づいてM5Core2の画面をランダムに色を変えて5秒間点滅させる
