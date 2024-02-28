@@ -8,6 +8,7 @@
 #include "wifiConfig.h"
 #include "SPIFFSRead.h"
 #include "button.h"
+#include "audio.h"
 
 // WiFi設定
 const char* ssid = "YOUR_WIFI_SSID";
@@ -31,6 +32,7 @@ void setup() {
   setupAWSIoT();
 
   buttonsetup();
+  audio_setup();
 
   //のwhile(1);
 
