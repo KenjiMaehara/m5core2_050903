@@ -27,7 +27,9 @@ void buttonTask(void *parameter) {
       //}
     }
     M5.update();
-    if (M5.BtnB.wasPressed()) {
+    if (M5.BtnA.wasPressed() || M5.BtnB.wasPressed() || M5.BtnC.wasPressed()) {
+
+      Serial.println("Bell Ringing!"); // 例としてシリアルモニタに出力
 
       String topic = String("button/topic/") + gDeviceName; // トピック名を構築
       if(client.publish(topic.c_str(), (gDeviceName + " Button A was pressed").c_str())){
