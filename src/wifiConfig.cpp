@@ -4,7 +4,7 @@
 #include "wifiConfig.h"  // このスケッチのヘッダファイル
 #include <M5Core2.h>
 
-void connectToWiFi() {
+void setup_connectToWiFi() {
 
   // M5Core2の初期化
   M5.begin();

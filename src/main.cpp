@@ -23,7 +23,7 @@ void setup() {
   IPAddress dns(8,8,8,8); // GoogleのDNS
   WiFi.config(IPAddress(0,0,0,0), IPAddress(0,0,0,0), IPAddress(0,0,0,0), dns);
   
-  connectToWiFi();
+  setup_connectToWiFi();
 
 
   delay(1000);
