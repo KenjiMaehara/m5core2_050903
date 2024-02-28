@@ -38,7 +38,7 @@ void buttonTask(void *parameter) {
         Serial.println("Failed to publish Button A press event.");
       }
 
-      vTaskDelay(100 / portTICK_PERIOD_MS); // 100ミリ秒の遅延
+      vTaskDelay(5000 / portTICK_PERIOD_MS); // 100ミリ秒の遅延
     }
     vTaskDelay(100 / portTICK_PERIOD_MS); // 100ミリ秒の遅延
   }
