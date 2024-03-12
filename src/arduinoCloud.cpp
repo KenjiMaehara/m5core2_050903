@@ -30,9 +30,9 @@ void arduinoCloud_setup() {
   Serial.println("Connected to WiFi");
 
   ArduinoCloud.setThingId(thingId);
-  ArduinoCloud.setThingPassword(thingPsw);
+  //ArduinoCloud.setThingPassword(thingPsw);
 
-  ArduinoCloud.begin(ArduinoIoTPreferredConnection);
+  ArduinoCloud.begin();
 
   xTaskCreatePinnedToCore(
     cloudTask,              // タスクの関数
